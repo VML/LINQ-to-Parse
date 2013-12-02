@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>GoodlyFere.Parse.Linq</id>
+    <version>$version$</version>
+    <title>LINQ to Parse</title>
+    <authors>Ben Ramey</authors>
+    <owners>Ben Ramey</owners>
+    <copyright>Copyright 2013 Ben Ramey</copyright>
+    <licenseUrl>https://github.com/benjaminramey/LINQ-to-Parse/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/benjaminramey/LINQ-to-Parse</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>LINQ provider for Parse.com's REST API.</description>
+    <releaseNotes>
+        Initial release.
+    </releaseNotes>
+    <tags>linq parse parse.com</tags>
+    <dependencies>
+      <dependency id="Remotion.Linq" version="[1.15.2.0, 2.0)" />
+      <dependency id="this.Log" version="[0.0.3.0, 1.0)" />
+    </dependencies>
+  </metadata>
+</package>
