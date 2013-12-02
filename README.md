@@ -1,4 +1,6 @@
-GoodlyFere.Parse.Linq
-=====================
+# LINQ to Parse
 
-LINQ-to-Parse library for parse.com.
+This library is currently a work in progress.
+
+## Description
+A LINQ provider for Parse.com data.
