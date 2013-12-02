@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="AppSettingsParseApiSettingsProvider.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,47 +30,40 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using GoodlyFere.Parse.Linq.Interfaces;
-using Remotion.Linq;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.DefaultImplementations
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    public class AppSettingsParseApiSettingsProvider : IParseApiSettingsProvider
     {
-        #region Constants and Fields
+        #region Public Properties
 
-        private IParseApiSettingsProvider _settingsProvider;
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        public string ApiUrl
         {
-            _settingsProvider = settingsProvider;
+            get
+            {
+                return ConfigurationManager.AppSettings["ParseApiUrl"];
+            }
         }
 
-        #endregion
-
-        #region Public Methods
-
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        public string ApplicationId
         {
-            throw new NotImplementedException();
+            get
+            {
+                return ConfigurationManager.AppSettings["ParseApplicationId"];
+            }
         }
 
-        public T ExecuteScalar<T>(QueryModel queryModel)
+        public string RestApiKey
         {
-            throw new NotImplementedException();
-        }
-
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
-        {
-            throw new NotImplementedException();
+            get
+            {
+                return ConfigurationManager.AppSettings["ParseRestApiKey"];
+            }
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="ParseResults.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,49 +29,21 @@
 
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Interfaces;
-using Remotion.Linq;
+using System;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Execution
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    public class ParseResults<T>
     {
-        #region Constants and Fields
+        #region Public Properties
 
-        private IParseApiSettingsProvider _settingsProvider;
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
-        {
-            _settingsProvider = settingsProvider;
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public T ExecuteScalar<T>(QueryModel queryModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
-        {
-            throw new NotImplementedException();
-        }
+        public int Code { get; set; }
+        public string Error { get; set; }
+        public List<T> Results { get; set; }
 
         #endregion
     }

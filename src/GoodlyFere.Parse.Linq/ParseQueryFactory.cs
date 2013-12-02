@@ -31,6 +31,8 @@
 
 using System;
 using System.Linq;
+using GoodlyFere.Parse.Linq.DefaultImplementations;
+using GoodlyFere.Parse.Linq.Interfaces;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
 
@@ -44,16 +46,22 @@ namespace GoodlyFere.Parse.Linq
 
         public static ParseQueryable<T> Queryable<T>()
         {
-            return new ParseQueryable<T>(CreateParser(), CreateExecutor());
+            return Queryable<T>(null);
+        }
+
+        public static ParseQueryable<T> Queryable<T>(IParseApiSettingsProvider settingsProvider)
+        {
+            settingsProvider = settingsProvider ?? new AppSettingsParseApiSettingsProvider();
+            return new ParseQueryable<T>(CreateParser(), CreateExecutor(settingsProvider));
         }
 
         #endregion
 
         #region Methods
 
-        private static IQueryExecutor CreateExecutor()
+        private static IQueryExecutor CreateExecutor(IParseApiSettingsProvider settingsProvider)
         {
-            return new ParseQueryExecutor();
+            return new ParseQueryExecutor(settingsProvider);
         }
 
         private static IQueryParser CreateParser()

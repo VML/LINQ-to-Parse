@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="AppSettingsParseApiKeyProviderTests.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,47 +30,56 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Interfaces;
-using Remotion.Linq;
+using GoodlyFere.Parse.Linq.DefaultImplementations;
+using Xunit;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Tests.ImplementationTests
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    public class AppSettingsParseApiKeyProviderTests
     {
         #region Constants and Fields
 
-        private IParseApiSettingsProvider _settingsProvider;
+        private readonly AppSettingsParseApiSettingsProvider _provider;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        public AppSettingsParseApiKeyProviderTests()
         {
-            _settingsProvider = settingsProvider;
+            _provider = new AppSettingsParseApiSettingsProvider();
         }
 
         #endregion
 
         #region Public Methods
 
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        [Fact]
+        public void ApplicationId_MatchesAppSettings()
         {
-            throw new NotImplementedException();
+            string appId = ConfigurationManager.AppSettings["ParseApplicationId"];
+            Assert.NotNull(appId);
+            Assert.Equal(appId, _provider.ApplicationId);
         }
 
-        public T ExecuteScalar<T>(QueryModel queryModel)
+        [Fact]
+        public void ParseApiUrl_MatchesAppSettings()
         {
-            throw new NotImplementedException();
+            string apiUrl = ConfigurationManager.AppSettings["ParseApiUrl"];
+            Assert.NotNull(apiUrl);
+            Assert.Equal(apiUrl, _provider.ApiUrl);
         }
 
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
+        [Fact]
+        public void RestApiKey_MatchesAppSettings()
         {
-            throw new NotImplementedException();
+            string restKey = ConfigurationManager.AppSettings["ParseRestApiKey"];
+            Assert.NotNull(restKey);
+            Assert.Equal(restKey, _provider.RestApiKey);
         }
 
         #endregion

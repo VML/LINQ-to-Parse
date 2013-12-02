@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ExecutorTests.cs">
+// <copyright file="BaseTest.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -33,29 +33,31 @@ using System;
 using System.Linq;
 using LoggingExtensions.Logging;
 using LoggingExtensions.log4net;
-using Xunit;
+using Plant.Core;
 
 #endregion
 
 namespace GoodlyFere.Parse.Linq.Tests
 {
-    public class ExecutorTests
+    public class BaseTest
     {
         #region Constructors and Destructors
 
-        public ExecutorTests()
+        static BaseTest()
         {
             Log.InitializeWith<Log4NetLog>();
         }
 
+        public BaseTest()
+        {
+            ObjectPlant = new BasePlant().WithBlueprintsFromAssemblyOf<BaseTest>();
+        }
+
         #endregion
 
-        #region Public Methods
+        #region Properties
 
-        [Fact]
-        public void Test()
-        {
-        }
+        protected BasePlant ObjectPlant { get; set; }
 
         #endregion
     }

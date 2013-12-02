@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="ParseApi.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,27 +29,27 @@
 
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using GoodlyFere.Parse.Linq.Interfaces;
-using Remotion.Linq;
+using RestSharp;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Execution
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    public class ParseApi
     {
         #region Constants and Fields
 
-        private IParseApiSettingsProvider _settingsProvider;
+        private readonly IParseApiSettingsProvider _settingsProvider;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        public ParseApi(IParseApiSettingsProvider settingsProvider)
         {
             _settingsProvider = settingsProvider;
         }
@@ -58,19 +58,52 @@ namespace GoodlyFere.Parse.Linq
 
         #region Public Methods
 
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        public IList<T> Query<T>(params Parameter[] parameters)
         {
-            throw new NotImplementedException();
+            var client = new RestClient(_settingsProvider.ApiUrl);
+            var request = new RestRequest("classes/" + typeof(T).Name);
+
+            SetParameters(parameters, request);
+            SetParseHeaders(request);
+
+            IRestResponse<ParseResults<T>> response = client.Execute<ParseResults<T>>(request);
+            return GetResults(response);
         }
 
-        public T ExecuteScalar<T>(QueryModel queryModel)
+        #endregion
+
+        #region Methods
+
+        private static void SetParameters(IEnumerable<Parameter> parameters, RestRequest request)
         {
-            throw new NotImplementedException();
+            if (parameters == null)
+            {
+                return;
+            }
+
+            foreach (var parameter in parameters)
+            {
+                request.AddParameter(parameter);
+            }
         }
 
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
+        private IList<T> GetResults<T>(IRestResponse<ParseResults<T>> response)
         {
-            throw new NotImplementedException();
+            ParseResults<T> results = response.Data;
+
+            if (results.Code > 0)
+            {
+                this.Log().Error("Parse query failed: {0}", results.Error);
+                return new List<T>();
+            }
+
+            return results.Results;
+        }
+
+        private void SetParseHeaders(RestRequest request)
+        {
+            request.AddHeader("X-Parse-Application-Id", _settingsProvider.ApplicationId);
+            request.AddHeader("X-Parse-REST-API-Key", _settingsProvider.RestApiKey);
         }
 
         #endregion
