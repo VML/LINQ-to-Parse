@@ -49,6 +49,9 @@
     <Reference Include="this.Log">
       <HintPath>..\packages\this.Log.0.0.3.0\lib\net40\this.Log.dll</HintPath>
     </Reference>
+    <Reference Include="this.Log-log4net">
+      <HintPath>..\packages\this.Log-log4net.0.0.3.0\lib\net40\this.Log-log4net.dll</HintPath>
+    </Reference>
     <Reference Include="xunit">
       <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
     </Reference>
@@ -62,6 +65,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
