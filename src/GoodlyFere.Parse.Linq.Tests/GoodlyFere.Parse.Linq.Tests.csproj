@@ -49,6 +49,10 @@
     <Reference Include="Plant.Core">
       <HintPath>..\packages\Plant.0.1.0.0\lib\net40\Plant.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Remotion.Linq, Version=1.15.2.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Remotion.Linq.1.15.2.0\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp">
       <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
     </Reference>
@@ -78,6 +82,8 @@
     <Compile Include="BaseTest.cs" />
     <Compile Include="ExecutionTests\ParseApiTests.theorydata.cs" />
     <Compile Include="ExecutionTests\ParseApiTests.cs" />
+    <Compile Include="GenerationTests\TranslationVisitorTests.theorydata.cs" />
+    <Compile Include="GenerationTests\TranslationVisitorTests.cs" />
     <Compile Include="ImplementationTests\AppSettingsParseApiKeyProviderTests.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
