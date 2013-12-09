@@ -31,8 +31,8 @@
 
 using System;
 using System.Linq;
-using GoodlyFere.Parse.Linq.DefaultImplementations;
-using GoodlyFere.Parse.Linq.Interfaces;
+using GoodlyFere.Parse.DefaultImplementations;
+using GoodlyFere.Parse.Interfaces;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
 

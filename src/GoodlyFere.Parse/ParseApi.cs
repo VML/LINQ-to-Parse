@@ -30,14 +30,18 @@
 #region Usings
 
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System;
-using GoodlyFere.Parse.Linq.Interfaces;
+using System.Reflection;
+using GoodlyFere.Parse.Attributes;
+using GoodlyFere.Parse.Interfaces;
 using RestSharp;
+using RestSharp.Contrib;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Execution
+namespace GoodlyFere.Parse
 {
     public class ParseApi
     {
@@ -58,15 +62,13 @@ namespace GoodlyFere.Parse.Linq.Execution
 
         #region Public Methods
 
-        public IList<T> Query<T>(params Parameter[] parameters)
+        public IList<T> Query<T>(string queryString)
         {
-            var client = new RestClient(_settingsProvider.ApiUrl);
-            var request = new RestRequest("classes/" + typeof(T).Name);
+            string uri = GetQueryRequestUri<T>();
+            var request = new RestRequest(uri);
+            SetParameters<T>(queryString, request);
 
-            SetParameters(parameters, request);
-            SetParseHeaders(request);
-
-            IRestResponse<ParseResults<T>> response = client.Execute<ParseResults<T>>(request);
+            IRestResponse<ParseQueryResults<T>> response = ExecuteRequest<ParseQueryResults<T>>(request);
             return GetResults(response);
         }
 
@@ -74,22 +76,44 @@ namespace GoodlyFere.Parse.Linq.Execution
 
         #region Methods
 
-        private static void SetParameters(IEnumerable<Parameter> parameters, RestRequest request)
+        internal IRestResponse<T> ExecuteRequest<T>(IRestRequest request) where T : new()
         {
-            if (parameters == null)
-            {
-                return;
-            }
+            RestClient client = new RestClient(_settingsProvider.ApiUrl);
+            SetParseHeaders(request);
+            IRestResponse<T> response = client.Execute<T>(request);
 
-            foreach (var parameter in parameters)
+            return response;
+        }
+
+        private static void SetParameters<T>(string queryString, RestRequest request)
+        {
+            NameValueCollection parameters = HttpUtility.ParseQueryString(queryString);
+
+            foreach (string key in parameters.AllKeys)
             {
-                request.AddParameter(parameter);
+                request.AddParameter(key, parameters[key]);
             }
         }
 
-        private IList<T> GetResults<T>(IRestResponse<ParseResults<T>> response)
+        private string GetQueryRequestUri<T>()
         {
-            ParseResults<T> results = response.Data;
+            Type type = typeof(T);
+            CustomAttributeData attr =
+                type.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
+
+            if (attr == null)
+            {
+                return "classes/" + type.Name;
+            }
+            else
+            {
+                return (string)attr.ConstructorArguments[0].Value;
+            }
+        }
+
+        private IList<T> GetResults<T>(IRestResponse<ParseQueryResults<T>> response)
+        {
+            ParseQueryResults<T> results = response.Data;
 
             if (results.Code > 0)
             {
@@ -100,10 +124,11 @@ namespace GoodlyFere.Parse.Linq.Execution
             return results.Results;
         }
 
-        private void SetParseHeaders(RestRequest request)
+        private void SetParseHeaders(IRestRequest request)
         {
             request.AddHeader("X-Parse-Application-Id", _settingsProvider.ApplicationId);
             request.AddHeader("X-Parse-REST-API-Key", _settingsProvider.RestApiKey);
+            request.AddHeader("Content-Type", "application/json");
         }
 
         #endregion

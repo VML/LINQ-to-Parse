@@ -32,7 +32,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Interfaces;
+using GoodlyFere.Parse.Interfaces;
+using GoodlyFere.Parse.Linq.Generation;
 using Remotion.Linq;
 
 #endregion
@@ -70,7 +71,17 @@ namespace GoodlyFere.Parse.Linq
 
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            throw new NotImplementedException();
+            string queryString = TranslationVisitor.Translate(queryModel);
+            queryString += "&limit=1";
+
+            IList<T> query = ParseContext.API.Query<T>(queryString);
+
+            if (returnDefaultWhenEmpty)
+            {
+                return query.FirstOrDefault();
+            }
+
+            return query.First();
         }
 
         #endregion

@@ -32,11 +32,11 @@
 using System;
 using System.Configuration;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Interfaces;
+using GoodlyFere.Parse.Interfaces;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.DefaultImplementations
+namespace GoodlyFere.Parse.DefaultImplementations
 {
     public class AppSettingsParseApiSettingsProvider : IParseApiSettingsProvider
     {

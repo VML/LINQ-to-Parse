@@ -126,7 +126,7 @@ namespace GoodlyFere.Parse.Linq.Generation
                 else
                 {
                     var pqc = new ParseQueryConstraint();
-                    pqc.Add();
+                    //pqc.Add();
                 }
             }
             _dictionary.Add(key, value);
@@ -159,12 +159,12 @@ namespace GoodlyFere.Parse.Linq.Generation
 
         public bool Remove(KeyValuePair<string, object> item)
         {
-            (_dictionary as IDictionary<string, object>).Remove(item);
+            return (_dictionary as IDictionary<string, object>).Remove(item);
         }
 
         public bool Remove(string key)
         {
-            _dictionary.Remove(key);
+            return _dictionary.Remove(key);
         }
 
         public bool TryGetValue(string key, out object value)

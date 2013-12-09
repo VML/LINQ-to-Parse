@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IParseApiSettingsProvider.cs">
+// <copyright file="ParseResults.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,20 +29,21 @@
 
 #region Usings
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
+using System;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Interfaces
+namespace GoodlyFere.Parse
 {
-    public interface IParseApiSettingsProvider
+    public class ParseQueryResults<T>
     {
         #region Public Properties
 
-        string ApiUrl { get; }
-        string ApplicationId { get; }
-        string RestApiKey { get; }
+        public int Code { get; set; }
+        public string Error { get; set; }
+        public List<T> Results { get; set; }
 
         #endregion
     }
