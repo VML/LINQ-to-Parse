@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodlyFere.Parse.Interfaces;
 using GoodlyFere.Parse.Linq.Generation;
+using GoodlyFere.Parse.Linq.Generation.Maps;
 using Remotion.Linq;
 
 #endregion

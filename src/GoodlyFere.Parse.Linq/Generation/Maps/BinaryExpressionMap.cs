@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Generation.Contraints;
 using GoodlyFere.Parse.Linq.Generation.Handlers;
 
 #endregion
@@ -40,7 +41,7 @@ using GoodlyFere.Parse.Linq.Generation.Handlers;
 namespace GoodlyFere.Parse.Linq.Generation.Maps
 {
     internal delegate void BinaryExpressionFactoryMethod(
-        List<ParseQueryProperty> queryProperties, BinaryExpression binExpr);
+        List<ConstraintSet> queryProperties, BinaryExpression binExpr);
 
     internal class BinaryExpressionMap : Dictionary<ExpressionType, BinaryExpressionFactoryMethod>
     {
@@ -50,6 +51,8 @@ namespace GoodlyFere.Parse.Linq.Generation.Maps
         {
             // logical operators
             Add(ExpressionType.AndAlso, BinaryExpressionHandlers.LogicalAnd);
+            // logical operators
+            Add(ExpressionType.OrElse, BinaryExpressionHandlers.LogicalOr);
 
             // comparison operators
             Add(ExpressionType.Equal, BinaryExpressionHandlers.Equals);

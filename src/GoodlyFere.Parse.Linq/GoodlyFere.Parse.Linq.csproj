@@ -55,14 +55,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generation\Contraints\ConstraintSet.cs" />
     <Compile Include="Generation\ExpressionVisitors\BaseThrowingExpressionTreeVisitor.cs" />
-    <Compile Include="Generation\ExpressionVisitors\BinaryExpressionVisitor.cs" />
     <Compile Include="Generation\ExpressionVisitors\ConstantValueFinder.cs" />
     <Compile Include="Generation\ExpressionVisitors\MemberNameFinder.cs" />
     <Compile Include="Generation\Handlers\BinaryExpressionHandlers.cs" />
+    <Compile Include="Generation\Handlers\StringMethodHandlers.cs" />
+    <Compile Include="Generation\Handlers\MethodCallExpressionHandlers.cs" />
     <Compile Include="Generation\Maps\BinaryExpressionMap.cs" />
     <Compile Include="Generation\Maps\BinaryOperatorMap.cs" />
-    <Compile Include="Generation\ParseQueryConstraint.cs" />
+    <Compile Include="Generation\Contraints\Constraint.cs" />
+    <Compile Include="Generation\Maps\MethodCallExpressionMap.cs" />
     <Compile Include="Generation\TranslationVisitor.cs" />
     <Compile Include="Generation\ExpressionVisitors\RootExpressionVisitor.cs" />
     <Compile Include="LogExtensions.cs" />

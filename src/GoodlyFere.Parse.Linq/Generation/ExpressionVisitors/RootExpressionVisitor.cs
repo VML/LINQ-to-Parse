@@ -33,6 +33,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Generation.Contraints;
+using GoodlyFere.Parse.Linq.Generation.Maps;
 
 #endregion
 
@@ -40,24 +42,37 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 {
     internal class RootExpressionVisitor : BaseThrowingExpressionTreeVisitor
     {
+        #region Constants and Fields
+
+        private static readonly BinaryExpressionMap BinaryExpressionMap;
+        private static readonly MethodCallExpressionMap MethodCallExpressionMap;
+
+        #endregion
+
         #region Constructors and Destructors
+
+        static RootExpressionVisitor()
+        {
+            BinaryExpressionMap = new BinaryExpressionMap();
+            MethodCallExpressionMap = new MethodCallExpressionMap();
+        }
 
         public RootExpressionVisitor()
         {
-            QueryProperties = new List<ParseQueryProperty>();
+            QueryProperties = new List<ConstraintSet>();
         }
 
         #endregion
 
         #region Properties
 
-        protected List<ParseQueryProperty> QueryProperties { get; private set; }
+        protected List<ConstraintSet> QueryProperties { get; private set; }
 
         #endregion
 
         #region Public Methods
 
-        public static List<ParseQueryProperty> Translate(Expression predicate)
+        public static List<ConstraintSet> Translate(Expression predicate)
         {
             var visitor = new RootExpressionVisitor();
             visitor.VisitExpression(predicate);
@@ -70,8 +85,26 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
-            BinaryExpressionVisitor.Parse(expression, QueryProperties);
-            return expression;
+            if (BinaryExpressionMap.ContainsKey(expression.NodeType))
+            {
+                BinaryExpressionMap[expression.NodeType](QueryProperties, expression);
+                return expression;
+            }
+
+            return base.VisitBinaryExpression(expression);
+        }
+
+        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+        {
+            Type declaringType = expression.Method.DeclaringType;
+
+            if (MethodCallExpressionMap.ContainsKey(declaringType))
+            {
+                MethodCallExpressionMap[declaringType](QueryProperties, expression);
+                return expression;
+            }
+
+            return base.VisitMethodCallExpression(expression);
         }
 
         #endregion

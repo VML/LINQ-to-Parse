@@ -27,7 +27,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 
         #region Methods
 
-        internal static object Find(BinaryExpression expression)
+        internal static object Find(Expression expression)
         {
             var visitor = new ConstantValueFinder();
             visitor.VisitExpression(expression);

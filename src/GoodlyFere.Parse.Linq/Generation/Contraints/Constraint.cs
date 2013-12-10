@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TranslationVisitorTests.cs">
+// <copyright file="ParseQueryConstraint.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,48 +31,37 @@
 
 using System;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Generation;
+using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Generation.Maps;
-using GoodlyFere.Parse.Linq.Tests.Support;
-using Remotion.Linq;
-using Remotion.Linq.Parsing.Structure;
-using Xunit;
-using Xunit.Extensions;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
+namespace GoodlyFere.Parse.Linq.Generation.Contraints
 {
-    public partial class TranslationVisitorTests
+    internal class Constraint
     {
-        #region Public Methods
+        #region Constructors and Destructors
 
-        [Theory]
-        [PropertyData("CompoundComparisons")]
-        public void WhereClauses_CompoundComparisons_TranslatesProperly(
-            IQueryable<TestObject> clause, string expectedTranslation)
+        public Constraint(ExpressionType type, object value)
         {
-            DoWhereClauseTests(clause, expectedTranslation);
+            ExpressionName = BinaryOperatorMap.Get(type);
+            Type = type;
+            Value = value;
         }
 
-        [Theory]
-        [PropertyData("SimpleComparisons")]
-        public void WhereClauses_SimpleComparisons_TranslatesProperly(
-            IQueryable<TestObject> clause, string expectedTranslation)
+        public Constraint(string expressionName, object value)
         {
-            DoWhereClauseTests(clause, expectedTranslation);
+            ExpressionName = expressionName;
+            Value = value;
         }
 
         #endregion
 
-        #region Methods
+        #region Public Properties
 
-        private static void DoWhereClauseTests(IQueryable<TestObject> clause, string expectedTranslation)
-        {
-            QueryModel queryModel = QueryParser.CreateDefault().GetParsedQuery(clause.Expression);
-            string translation = TranslationVisitor.Translate(queryModel);
-            Assert.Equal(expectedTranslation, translation);
-        }
+        public string ExpressionName { get; set; }
+        public ExpressionType Type { get; set; }
+        public object Value { get; set; }
 
         #endregion
     }

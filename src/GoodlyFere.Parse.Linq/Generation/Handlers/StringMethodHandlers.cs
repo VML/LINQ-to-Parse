@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TranslationVisitorTests.cs">
+// <copyright file="BinaryExpressionHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,48 +30,24 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Generation;
-using GoodlyFere.Parse.Linq.Generation.Maps;
-using GoodlyFere.Parse.Linq.Tests.Support;
-using Remotion.Linq;
-using Remotion.Linq.Parsing.Structure;
-using Xunit;
-using Xunit.Extensions;
+using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Generation.Contraints;
+using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
+namespace GoodlyFere.Parse.Linq.Generation.Handlers
 {
-    public partial class TranslationVisitorTests
+    internal static class StringMethodHandlers
     {
-        #region Public Methods
-
-        [Theory]
-        [PropertyData("CompoundComparisons")]
-        public void WhereClauses_CompoundComparisons_TranslatesProperly(
-            IQueryable<TestObject> clause, string expectedTranslation)
-        {
-            DoWhereClauseTests(clause, expectedTranslation);
-        }
-
-        [Theory]
-        [PropertyData("SimpleComparisons")]
-        public void WhereClauses_SimpleComparisons_TranslatesProperly(
-            IQueryable<TestObject> clause, string expectedTranslation)
-        {
-            DoWhereClauseTests(clause, expectedTranslation);
-        }
-
-        #endregion
-
         #region Methods
 
-        private static void DoWhereClauseTests(IQueryable<TestObject> clause, string expectedTranslation)
+        internal static Constraint Contains(List<ConstraintSet> queryProperties, MethodCallExpression expression)
         {
-            QueryModel queryModel = QueryParser.CreateDefault().GetParsedQuery(clause.Expression);
-            string translation = TranslationVisitor.Translate(queryModel);
-            Assert.Equal(expectedTranslation, translation);
+            object value = ConstantValueFinder.Find(expression);
+            return new Constraint("$regex", value);
         }
 
         #endregion

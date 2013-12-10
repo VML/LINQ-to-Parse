@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryConstraint.cs">
+// <copyright file="BinaryExpressionHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -33,52 +33,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Generation.Contraints;
+using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Generation
+namespace GoodlyFere.Parse.Linq.Generation.Handlers
 {
-    internal class ParseQueryProperty
+    internal static class MethodCallExpressionHandlers
     {
-        #region Constructors and Destructors
+        #region Methods
 
-        public ParseQueryProperty(string propertyName)
-            : this()
+        internal static void String(List<ConstraintSet> queryProperties, MethodCallExpression expression)
         {
-            PropertyName = propertyName;
+            string propertyName = MemberNameFinder.Find(expression.Object);
+            ConstraintSet set = queryProperties.SingleOrDefault(cs => cs.PropertyName == propertyName);
+
+            if (set == null)
+            {
+                set = new ConstraintSet(propertyName);
+                queryProperties.Add(set);
+            }
+
+            switch (expression.Method.Name)
+            {
+                case "Contains":
+                    set.Constraints.Enqueue(StringMethodHandlers.Contains(queryProperties, expression));
+                    break;
+                default:
+                    throw new Exception(string.Format("Method call not handled! {0}", expression.Method.Name));
+            }
         }
 
-        public ParseQueryProperty()
+        private static bool DeclaringTypeIsString(MethodCallExpression expression)
         {
-            Constraints = new Stack<ParseQueryConstraint>();
+            return expression.Method.DeclaringType == typeof(String);
         }
-
-        #endregion
-
-        #region Public Properties
-
-        public Stack<ParseQueryConstraint> Constraints { get; set; }
-        public string PropertyName { get; set; }
-
-        #endregion
-    }
-
-    internal class ParseQueryConstraint
-    {
-        #region Constructors and Destructors
-
-        public ParseQueryConstraint(ExpressionType type, object value)
-        {
-            Type = type;
-            Value = value;
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        public ExpressionType Type { get; set; }
-        public object Value { get; set; }
 
         #endregion
     }

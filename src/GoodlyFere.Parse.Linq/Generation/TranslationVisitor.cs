@@ -46,19 +46,8 @@ namespace GoodlyFere.Parse.Linq.Generation
 {
     public class TranslationVisitor : QueryModelVisitorBase
     {
-        #region Constants and Fields
-
-        private static readonly BinaryOperatorMap OperatorMap;
-
-        #endregion
-
         #region Constructors and Destructors
-
-        static TranslationVisitor()
-        {
-            OperatorMap = new BinaryOperatorMap();
-        }
-
+        
         protected TranslationVisitor()
         {
             Parameters = new Dictionary<string, string>();
@@ -97,12 +86,13 @@ namespace GoodlyFere.Parse.Linq.Generation
                 qp => qp.PropertyName,
                 qp =>
                     {
-                        if (qp.Constraints.Count == 1 && qp.Constraints.First().Type == ExpressionType.Equal)
+                        if (qp.Constraints.Count == 1
+                            && qp.Constraints.First().Type == ExpressionType.Equal)
                         {
                             return qp.Constraints.First().Value;
                         }
 
-                        return qp.Constraints.ToDictionary(c => OperatorMap[c.Type], c => c.Value);
+                        return qp.Constraints.ToDictionary(c => BinaryOperatorMap.Get(c.Type) ?? c.ExpressionName, c => c.Value);
                     });
 
             Parameters.Add("where", JsonConvert.SerializeObject(queryObject, settings));
