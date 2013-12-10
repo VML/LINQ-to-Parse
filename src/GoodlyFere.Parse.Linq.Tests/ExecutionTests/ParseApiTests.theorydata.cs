@@ -51,171 +51,67 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
                     {
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"firstName\": \"Ben\"}"
-                                            }
-                                    },
+                                "where={\"firstName\": \"Ben\"}",
                                 (Func<TestObject, bool>)(to => to.FirstName == "Ben")
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"isOld\": false}"
-                                            }
-                                    },
+                                "where={\"isOld\": false}",
                                 (Func<TestObject, bool>)(to => !to.IsOld)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"isOld\": true}"
-                                            }
-                                    },
+                                "where={\"isOld\": true}",
                                 (Func<TestObject, bool>)(to => to.IsOld)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"firstName\": \"Ben\", \"lastName\": \"Ramey\"}"
-                                            }
-                                    },
+                                "where={\"firstName\": \"Ben\", \"lastName\": \"Ramey\"}",
                                 (Func<TestObject, bool>)(to => to.FirstName == "Ben" && to.LastName == "Ramey")
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$lt\": 90}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$lt\": 90}}",
                                 (Func<TestObject, bool>)(to => to.Age < 90)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$gt\": 80}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$gt\": 80}}",
                                 (Func<TestObject, bool>)(to => to.Age > 80)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$lte\": 90}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$lte\": 90}}",
                                 (Func<TestObject, bool>)(to => to.Age <= 90)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$gte\": 31}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$gte\": 31}}",
                                 (Func<TestObject, bool>)(to => to.Age >= 31)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$ne\": 31}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$ne\": 31}}",
                                 (Func<TestObject, bool>)(to => to.Age != 31)
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"firstName\": {\"$exists\": true}}"
-                                            }
-                                    },
+                                "where={\"firstName\": {\"$exists\": true}}",
                                 (Func<TestObject, bool>)(to => !string.IsNullOrEmpty(to.FirstName))
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"firstName\": {\"$exists\": false}}"
-                                            }
-                                    },
+                                "where={\"firstName\": {\"$exists\": false}}",
                                 (Func<TestObject, bool>)(to => string.IsNullOrEmpty(to.FirstName))
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$in\": [31,92,90,89]}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$in\": [31,92,90,89]}}",
                                 (Func<TestObject, bool>)(to => new[] { 31, 92, 90, 89 }.Contains(to.Age))
                             },
                         new object[]
                             {
-                                new[]
-                                    {
-                                        new Parameter
-                                            {
-                                                Name = "where",
-                                                Type = ParameterType.GetOrPost,
-                                                Value = "{\"age\": {\"$nin\": [31,92,90,89]}}"
-                                            }
-                                    },
+                                "where={\"age\": {\"$nin\": [31,92,90,89]}}",
                                 (Func<TestObject, bool>)(to => !(new[] { 31, 92, 90, 89 }.Contains(to.Age)))
                             },
                     };

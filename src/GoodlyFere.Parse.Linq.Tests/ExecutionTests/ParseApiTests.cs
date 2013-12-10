@@ -64,14 +64,13 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         #region Public Methods
 
         [Fact]
-        public void Query_InvalidQuery_ReturnsEmptyList()
+        public void Query_InvalidQuery_ThrowsException()
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
-            var results =
-                parseApi.Query<TestObject>("where=dkdkdkdkdkd");
+            IList<TestObject> results = null;
 
-            Assert.NotNull(results);
-            Assert.Equal(0, results.Count);
+            Assert.Throws<Exception>(() => results = parseApi.Query<TestObject>("where=dkdkdkdkdkd"));
+            Assert.Null(results);
         }
 
         [Theory]
@@ -125,11 +124,10 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         public void Query_SingleQuotesFails()
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
-            var results =
-                parseApi.Query<TestObject>("where={'firstName': 'Ben'}");
+            IList<TestObject> results = null;
 
-            Assert.NotNull(results);
-            Assert.Equal(0, results.Count);
+            Assert.Throws<Exception>(() => results = parseApi.Query<TestObject>("where={'firstName': 'Ben'}"));
+            Assert.Null(results);
         }
 
         [Theory]

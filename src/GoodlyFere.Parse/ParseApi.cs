@@ -98,7 +98,7 @@ namespace GoodlyFere.Parse
         {
             string uri = GetQueryRequestUri<T>();
             var request = GetDefaultRequest(uri);
-            SetParameters<T>(queryString, request);
+            SetParameters(queryString, request);
 
             IRestResponse<ParseQueryResults<T>> response = ExecuteRequest<ParseQueryResults<T>>(request);
             return GetResults(response);
@@ -139,8 +139,13 @@ namespace GoodlyFere.Parse
             return response;
         }
 
-        private static void SetParameters<T>(string queryString, RestRequest request)
+        private static void SetParameters(string queryString, RestRequest request)
         {
+            if (string.IsNullOrWhiteSpace(queryString))
+            {
+                return;
+            }
+
             NameValueCollection parameters = HttpUtility.ParseQueryString(queryString);
 
             foreach (string key in parameters.AllKeys)
