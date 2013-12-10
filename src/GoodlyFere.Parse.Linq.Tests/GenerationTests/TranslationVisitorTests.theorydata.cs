@@ -55,6 +55,27 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                  select to),
                                 "where={\"age\":{\"$gt\":31,\"$lt\":100}}"
                             },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where to.Age > 31 && to.Age < 100 && to.FirstName == "Ben"
+                                 select to),
+                                "where={\"age\":{\"$gt\":31,\"$lt\":100},\"firstName\":\"Ben\"}"
+                            },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where to.Age < 100 && to.FirstName == "Ben"
+                                 select to),
+                                "where={\"age\":{\"$lt\":100},\"firstName\":\"Ben\"}"
+                            },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where to.Age == 100 && to.FirstName == "Ben"
+                                 select to),
+                                "where={\"age\":100,\"firstName\":\"Ben\"}"
+                            },
                     };
             }
         }
