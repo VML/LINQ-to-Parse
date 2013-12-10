@@ -34,8 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Faker;
-using GoodlyFere.Parse.Linq.DefaultImplementations;
-using GoodlyFere.Parse.Linq.Execution;
+using GoodlyFere.Parse.DefaultImplementations;
 using Newtonsoft.Json;
 using Plant.Core;
 using RestSharp;
@@ -76,7 +75,7 @@ namespace GoodlyFere.Parse.Linq.Tests.Support
             request.AddHeader("X-Parse-Application-Id", settings.ApplicationId);
             request.AddHeader("X-Parse-REST-API-Key", settings.RestApiKey);
 
-            IRestResponse<ParseResults<T>> response = client.Execute<ParseResults<T>>(request);
+            IRestResponse<ParseQueryResults<T>> response = client.Execute<ParseQueryResults<T>>(request);
             return response.Data.Results;
         }
 

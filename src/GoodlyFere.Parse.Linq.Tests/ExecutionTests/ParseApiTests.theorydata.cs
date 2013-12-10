@@ -151,7 +151,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
                                                 Value = "{\"age\": {\"$gte\": 31}}"
                                             }
                                     },
-                                (Func<TestObject, bool>)(to => to.Age >=31)
+                                (Func<TestObject, bool>)(to => to.Age >= 31)
                             },
                         new object[]
                             {
@@ -203,7 +203,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
                                                 Value = "{\"age\": {\"$in\": [31,92,90,89]}}"
                                             }
                                     },
-                                (Func<TestObject, bool>)(to => new[]{31,92,90,89}.Contains(to.Age))
+                                (Func<TestObject, bool>)(to => new[] { 31, 92, 90, 89 }.Contains(to.Age))
                             },
                         new object[]
                             {
@@ -216,7 +216,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
                                                 Value = "{\"age\": {\"$nin\": [31,92,90,89]}}"
                                             }
                                     },
-                                (Func<TestObject, bool>)(to => !(new[]{31,92,90,89}.Contains(to.Age)))
+                                (Func<TestObject, bool>)(to => !(new[] { 31, 92, 90, 89 }.Contains(to.Age)))
                             },
                     };
             }

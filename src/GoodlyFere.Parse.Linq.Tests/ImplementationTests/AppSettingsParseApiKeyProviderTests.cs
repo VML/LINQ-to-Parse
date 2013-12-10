@@ -32,7 +32,7 @@
 using System;
 using System.Configuration;
 using System.Linq;
-using GoodlyFere.Parse.Linq.DefaultImplementations;
+using GoodlyFere.Parse.DefaultImplementations;
 using Xunit;
 
 #endregion

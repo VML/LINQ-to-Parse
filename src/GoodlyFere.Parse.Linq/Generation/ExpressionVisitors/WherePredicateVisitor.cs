@@ -47,7 +47,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
     {
         #region Constants and Fields
 
-        private static readonly BinaryExpressionMap _binaryExpressionMap;
+        private static readonly BinaryExpressionMap BinaryExpressionMap;
         private string _currentKey;
         private object _currentValue;
 
@@ -57,7 +57,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 
         static WherePredicateVisitor()
         {
-            _binaryExpressionMap = new BinaryExpressionMap();
+            BinaryExpressionMap = new BinaryExpressionMap();
         }
 
         public WherePredicateVisitor()
@@ -80,8 +80,10 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
             var visitor = new WherePredicateVisitor();
             visitor.VisitExpression(predicate);
 
-            var settings = new JsonSerializerSettings();
-            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
             return JsonConvert.SerializeObject(visitor.Query, settings);
         }
 
@@ -96,18 +98,18 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
                                    ? unhandledItem.ToString()
                                    : FormattingExpressionTreeVisitor.Format(itemAsExpression);
 
-            this.Log().Error(string.Format("Unhandled expression: {0}"), formatted);
+            this.Log().Error(string.Format("Unhandled expression: {0}", formatted));
             return new Exception("I can't handle it! Expression type: " + typeof(T).Name);
         }
 
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
-            if (_binaryExpressionMap.ContainsKey(expression.NodeType))
+            if (BinaryExpressionMap.ContainsKey(expression.NodeType))
             {
                 VisitExpression(expression.Left);
                 VisitExpression(expression.Right);
 
-                _binaryExpressionMap[expression.NodeType](Query, _currentKey, _currentValue);
+                BinaryExpressionMap[expression.NodeType](Query, _currentKey, _currentValue);
                 return expression;
             }
 

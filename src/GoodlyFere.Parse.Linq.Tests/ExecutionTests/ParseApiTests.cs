@@ -32,8 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Linq.DefaultImplementations;
-using GoodlyFere.Parse.Linq.Execution;
+using GoodlyFere.Parse.DefaultImplementations;
 using GoodlyFere.Parse.Linq.Tests.Support;
 using RestSharp;
 using Xunit;
@@ -69,8 +68,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "where", Type = ParameterType.GetOrPost, Value = "dkdkak;dfja;dfjad" });
+                parseApi.Query<TestObject>("where=dkdkdkdkdkd");
 
             Assert.NotNull(results);
             Assert.Equal(0, results.Count);
@@ -85,8 +83,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "limit", Value = amount, Type = ParameterType.GetOrPost });
+                parseApi.Query<TestObject>("limit=" + amount);
             var expectedResults = _testObjects.Take(amount).ToList();
 
             Assert.NotNull(results);
@@ -105,8 +102,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "order", Value = "age", Type = ParameterType.GetOrPost });
+                parseApi.Query<TestObject>("order=age");
             var expectedResults = _testObjects.OrderBy(to => to.Age).ToList();
 
             Assert.NotNull(results);
@@ -118,8 +114,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "order", Value = "-age", Type = ParameterType.GetOrPost });
+                parseApi.Query<TestObject>("order=-age");
             var expectedResults = _testObjects.OrderByDescending(to => to.Age).ToList();
 
             Assert.NotNull(results);
@@ -131,8 +126,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "where", Type = ParameterType.GetOrPost, Value = "{'firstName': 'Ben'}" });
+                parseApi.Query<TestObject>("where={'firstName': 'Ben'}");
 
             Assert.NotNull(results);
             Assert.Equal(0, results.Count);
@@ -147,8 +141,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "skip", Value = amount, Type = ParameterType.GetOrPost });
+                parseApi.Query<TestObject>("skip="+ amount);
             var expectedResults = _testObjects.Skip(amount).ToList();
 
             Assert.NotNull(results);
@@ -164,9 +157,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>(
-                    new Parameter { Name = "skip", Value = skip, Type = ParameterType.GetOrPost },
-                    new Parameter { Name = "limit", Value = limit, Type = ParameterType.GetOrPost });
+                parseApi.Query<TestObject>("skip=" + skip + "&limit=" + limit);
             var expectedResults = _testObjects.Skip(skip).Take(limit).ToList();
 
             Assert.NotNull(results);
@@ -187,9 +178,9 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
 
         [Theory]
         [PropertyData("WhereClauses")]
-        public void Query_WhereClauses_ExecutesQuery(Parameter[] parameters, Func<TestObject, bool> filter)
+        public void Query_WhereClauses_ExecutesQuery(string queryString, Func<TestObject, bool> filter)
         {
-            TestQuerying(parameters, _testObjects, filter);
+            TestQuerying(queryString, _testObjects, filter);
         }
 
         #endregion
@@ -208,13 +199,13 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         }
 
         private void TestQuerying<T>(
-            Parameter[] parameters, List<T> expectedResults, bool expectMoreThanZero)
+            string queryString, List<T> expectedResults, bool expectMoreThanZero)
             where T : TestObject
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             IList<T> results = null;
 
-            Assert.DoesNotThrow(() => results = parseApi.Query<T>(parameters));
+            Assert.DoesNotThrow(() => results = parseApi.Query<T>(queryString));
             Assert.NotNull(results);
 
             if (expectMoreThanZero)
@@ -230,11 +221,11 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
             CompareResultSets(expectedResults, results);
         }
 
-        private void TestQuerying<T>(Parameter[] parameters, IEnumerable<T> baseSet, Func<T, bool> filter)
+        private void TestQuerying<T>(string queryString, IEnumerable<T> baseSet, Func<T, bool> filter)
             where T : TestObject
         {
             List<T> expectedResults = baseSet.Where(filter).ToList();
-            TestQuerying(parameters, expectedResults, false);
+            TestQuerying(queryString, expectedResults, false);
         }
 
         #endregion
