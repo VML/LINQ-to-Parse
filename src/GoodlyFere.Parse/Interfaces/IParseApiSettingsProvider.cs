@@ -42,6 +42,7 @@ namespace GoodlyFere.Parse.Interfaces
 
         string ApiUrl { get; }
         string ApplicationId { get; }
+        string CurrentUserSessionToken { get; }
         string RestApiKey { get; }
 
         #endregion

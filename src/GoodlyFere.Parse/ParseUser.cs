@@ -2,7 +2,6 @@
 
 using System;
 using System.Linq;
-using System.Net;
 using System.Runtime.Serialization;
 using RestSharp;
 
@@ -57,12 +56,10 @@ namespace GoodlyFere.Parse
         #endregion
 
         #region Public Methods
-        
+
         public static ParseUser GetByToken(string sessionToken)
         {
             RestRequest request = new RestRequest("users/me") { Method = Method.GET };
-            request.AddHeader("X-Parse-Session-Token", sessionToken);
-
             return ExecuteUserRequest(request);
         }
 
@@ -91,57 +88,32 @@ namespace GoodlyFere.Parse
                 throw new ArgumentNullException("newUser");
             }
 
-            RestRequest request = new RestRequest("users") { Method = Method.POST };
+            RestRequest request = new RestRequest("users") { Method = Method.POST, RequestFormat = DataFormat.Json };
             request.AddBody(newUser);
+
             IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request);
-
-            CheckForResponseError(response);
-            CheckForParseError(response);
-
             return response.Data;
+        }
+
+        public static bool ValidateSession(string sessionToken)
+        {
+            try
+            {
+                return GetByToken(sessionToken) != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         #endregion
 
         #region Methods
 
-        private static void CheckForParseError(IRestResponse<ParseUser> response)
-        {
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                return;
-            }
-
-            "ParseUser".Log().Error(
-                string.Format(
-                    "Parse error: {0}, {1}",
-                    response.StatusCode,
-                    response.StatusDescription));
-
-            throw new Exception(response.StatusDescription);
-        }
-
-        private static void CheckForResponseError(IRestResponse<ParseUser> response)
-        {
-            if (response.ResponseStatus == ResponseStatus.Completed)
-            {
-                return;
-            }
-
-            "ParseUser".Log().Error(
-                string.Format("Response error: {0}", response.ResponseStatus),
-                response.ErrorException);
-
-            throw response.ErrorException;
-        }
-
         private static ParseUser ExecuteUserRequest(RestRequest request)
         {
             IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request);
-
-            CheckForResponseError(response);
-            CheckForParseError(response);
-
             return response.Data;
         }
 

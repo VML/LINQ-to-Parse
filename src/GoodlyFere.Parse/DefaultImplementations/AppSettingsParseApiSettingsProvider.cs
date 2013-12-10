@@ -42,7 +42,7 @@ namespace GoodlyFere.Parse.DefaultImplementations
     {
         #region Public Properties
 
-        public string ApiUrl
+        public virtual string ApiUrl
         {
             get
             {
@@ -50,7 +50,7 @@ namespace GoodlyFere.Parse.DefaultImplementations
             }
         }
 
-        public string ApplicationId
+        public virtual string ApplicationId
         {
             get
             {
@@ -58,7 +58,15 @@ namespace GoodlyFere.Parse.DefaultImplementations
             }
         }
 
-        public string RestApiKey
+        public virtual string CurrentUserSessionToken
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public virtual string RestApiKey
         {
             get
             {

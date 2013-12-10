@@ -33,9 +33,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System;
+using System.Net;
 using System.Reflection;
 using GoodlyFere.Parse.Attributes;
 using GoodlyFere.Parse.Interfaces;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Contrib;
 
@@ -62,14 +64,62 @@ namespace GoodlyFere.Parse
 
         #region Public Methods
 
+        public static void CheckForParseError<T>(IRestResponse<T> response)
+        {
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return;
+            }
+
+            "ParseApi".Log().Error(
+                String.Format(
+                    "Parse error: {0}, {1}",
+                    response.StatusCode,
+                    response.StatusDescription));
+
+            throw new Exception(response.StatusDescription);
+        }
+
+        public static void CheckForResponseError<T>(IRestResponse<T> response)
+        {
+            if (response.ResponseStatus == ResponseStatus.Completed)
+            {
+                return;
+            }
+
+            "ParseApi".Log().Error(
+                String.Format("Response error: {0}", response.ResponseStatus),
+                response.ErrorException);
+
+            throw response.ErrorException;
+        }
+
         public IList<T> Query<T>(string queryString)
         {
             string uri = GetQueryRequestUri<T>();
-            var request = new RestRequest(uri);
+            var request = GetDefaultRequest(uri);
             SetParameters<T>(queryString, request);
 
             IRestResponse<ParseQueryResults<T>> response = ExecuteRequest<ParseQueryResults<T>>(request);
             return GetResults(response);
+        }
+
+        public T Update<T>(T modelToSave) where T : BaseModel, new()
+        {
+            if (String.IsNullOrWhiteSpace(modelToSave.ObjectId))
+            {
+                throw new ArgumentException("ObjectId must be set to save.");
+            }
+
+            string uri = GetQueryRequestUri<T>();
+            uri += "/" + modelToSave.ObjectId;
+            RestRequest request = GetDefaultRequest(uri);
+            request.Method = Method.PUT;
+            request.AddBody(modelToSave);
+
+            ExecuteRequest<T>(request);
+            // response only contains updatedAt field, so we just return the same updated object
+            return modelToSave;
         }
 
         #endregion
@@ -79,8 +129,12 @@ namespace GoodlyFere.Parse
         internal IRestResponse<T> ExecuteRequest<T>(IRestRequest request) where T : new()
         {
             RestClient client = new RestClient(_settingsProvider.ApiUrl);
+            client.AddHandler("application/json", new ParseDeserializer());
             SetParseHeaders(request);
+
             IRestResponse<T> response = client.Execute<T>(request);
+            CheckForResponseError(response);
+            CheckForParseError(response);
 
             return response;
         }
@@ -95,6 +149,16 @@ namespace GoodlyFere.Parse
             }
         }
 
+        private RestRequest GetDefaultRequest(string uri)
+        {
+            RestRequest request = new RestRequest(uri)
+                {
+                    RequestFormat = DataFormat.Json,
+                    JsonSerializer = new ParseSerializer()
+                };
+            return request;
+        }
+
         private string GetQueryRequestUri<T>()
         {
             Type type = typeof(T);
@@ -105,10 +169,14 @@ namespace GoodlyFere.Parse
             {
                 return "classes/" + type.Name;
             }
-            else
+
+            string name = (string)attr.ConstructorArguments[0].Value;
+            if (name.Equals("users"))
             {
-                return (string)attr.ConstructorArguments[0].Value;
+                return name;
             }
+
+            return "classes/" + name;
         }
 
         private IList<T> GetResults<T>(IRestResponse<ParseQueryResults<T>> response)
@@ -129,6 +197,11 @@ namespace GoodlyFere.Parse
             request.AddHeader("X-Parse-Application-Id", _settingsProvider.ApplicationId);
             request.AddHeader("X-Parse-REST-API-Key", _settingsProvider.RestApiKey);
             request.AddHeader("Content-Type", "application/json");
+
+            if (!string.IsNullOrWhiteSpace(_settingsProvider.CurrentUserSessionToken))
+            {
+                request.AddHeader("X-Parse-Session-Token", _settingsProvider.CurrentUserSessionToken);
+            }
         }
 
         #endregion

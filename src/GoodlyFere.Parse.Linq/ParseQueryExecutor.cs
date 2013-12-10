@@ -61,7 +61,10 @@ namespace GoodlyFere.Parse.Linq
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            throw new NotImplementedException();
+            string queryString = TranslationVisitor.Translate(queryModel);
+            IList<T> query = ParseContext.API.Query<T>(queryString);
+
+            return query.ToList();
         }
 
         public T ExecuteScalar<T>(QueryModel queryModel)
