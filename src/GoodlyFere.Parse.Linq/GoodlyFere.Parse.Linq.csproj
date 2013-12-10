@@ -55,12 +55,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generation\ExpressionVisitors\BaseThrowingExpressionTreeVisitor.cs" />
+    <Compile Include="Generation\ExpressionVisitors\BinaryExpressionVisitor.cs" />
+    <Compile Include="Generation\ExpressionVisitors\ConstantValueFinder.cs" />
+    <Compile Include="Generation\ExpressionVisitors\MemberNameFinder.cs" />
     <Compile Include="Generation\Handlers\BinaryExpressionHandlers.cs" />
     <Compile Include="Generation\Maps\BinaryExpressionMap.cs" />
     <Compile Include="Generation\Maps\BinaryOperatorMap.cs" />
     <Compile Include="Generation\ParseQueryConstraint.cs" />
     <Compile Include="Generation\TranslationVisitor.cs" />
-    <Compile Include="Generation\ExpressionVisitors\WherePredicateVisitor.cs" />
+    <Compile Include="Generation\ExpressionVisitors\RootExpressionVisitor.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="ParseQueryable.cs" />
     <Compile Include="ParseQueryExecutor.cs" />
@@ -77,6 +81,7 @@
       <Name>GoodlyFere.Parse</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -40,7 +40,7 @@ using GoodlyFere.Parse.Linq.Generation.Handlers;
 namespace GoodlyFere.Parse.Linq.Generation.Maps
 {
     internal delegate void BinaryExpressionFactoryMethod(
-        Dictionary<string, object> query, string currentKey, object currentValue);
+        List<ParseQueryProperty> queryProperties, BinaryExpression binExpr);
 
     internal class BinaryExpressionMap : Dictionary<ExpressionType, BinaryExpressionFactoryMethod>
     {
@@ -48,18 +48,26 @@ namespace GoodlyFere.Parse.Linq.Generation.Maps
 
         public BinaryExpressionMap()
         {
-            Add(ExpressionType.Equal,
-                BinaryExpressionHandlers.Equals);
-            Add(ExpressionType.NotEqual,
-                (q, k, v) => BinaryExpressionHandlers.Other(q, k, v, ExpressionType.NotEqual));
-            Add(ExpressionType.GreaterThan,
-                (q, k, v) => BinaryExpressionHandlers.Other(q, k, v, ExpressionType.GreaterThan));
-            Add(ExpressionType.GreaterThanOrEqual,
-                (q, k, v) => BinaryExpressionHandlers.Other(q, k, v, ExpressionType.GreaterThanOrEqual));
-            Add(ExpressionType.LessThan,
-                (q, k, v) => BinaryExpressionHandlers.Other(q, k, v, ExpressionType.LessThan));
-            Add(ExpressionType.LessThanOrEqual,
-                (q, k, v) => BinaryExpressionHandlers.Other(q, k, v, ExpressionType.LessThanOrEqual));
+            // logical operators
+            Add(ExpressionType.AndAlso, BinaryExpressionHandlers.LogicalAnd);
+
+            // comparison operators
+            Add(ExpressionType.Equal, BinaryExpressionHandlers.Equals);
+            Add(
+                ExpressionType.NotEqual,
+                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.NotEqual));
+            Add(
+                ExpressionType.GreaterThan,
+                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.GreaterThan));
+            Add(
+                ExpressionType.GreaterThanOrEqual,
+                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.GreaterThanOrEqual));
+            Add(
+                ExpressionType.LessThan,
+                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.LessThan));
+            Add(
+                ExpressionType.LessThanOrEqual,
+                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.LessThanOrEqual));
         }
 
         #endregion

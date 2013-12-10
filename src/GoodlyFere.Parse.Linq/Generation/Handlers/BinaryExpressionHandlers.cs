@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
 using GoodlyFere.Parse.Linq.Generation.Maps;
 
 #endregion
@@ -56,19 +57,67 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
 
         #endregion
 
-        #region Public Methods
+        #region Methods
 
-        public static void Equals(Dictionary<string, object> query, string currentKey, object currentValue)
+        internal static void Equals(List<ParseQueryProperty> queryProperties, BinaryExpression binExpr)
         {
-            query[currentKey] = currentValue;
+            object value = ConstantValueFinder.Find(binExpr);
+            string propertyName = MemberNameFinder.Find(binExpr);
+
+            var constraint = new ParseQueryConstraint(ExpressionType.Equal, value);
+            AddContraintQueryProperty(queryProperties, propertyName, constraint);
         }
 
-        public static void Other(Dictionary<string, object> query, string currentKey, object currentValue, ExpressionType exprType)
+        internal static void LogicalAnd(List<ParseQueryProperty> queryProperties, BinaryExpression binExpr)
         {
-            query[currentKey] = new Dictionary<string, object>
-                {
-                    { OperatorMap[exprType], currentValue }
-                };
+            List<ParseQueryProperty> leftProperties = RootExpressionVisitor.Translate(binExpr.Left);
+            List<ParseQueryProperty> rightProperties = RootExpressionVisitor.Translate(binExpr.Right);
+
+            IEnumerable<ParseQueryProperty> combined = CombineQueryProperties(leftProperties, rightProperties);
+            IEnumerable<ParseQueryProperty> newProperties = CombineQueryProperties(queryProperties, combined);
+
+            queryProperties.Clear();
+            queryProperties.AddRange(newProperties);
+        }
+
+        internal static void Other(
+            List<ParseQueryProperty> queryProperties, BinaryExpression binExpr, ExpressionType exprType)
+        {
+            object value = ConstantValueFinder.Find(binExpr);
+            string propertyName = MemberNameFinder.Find(binExpr);
+
+            var constraint = new ParseQueryConstraint(exprType, value);
+            AddContraintQueryProperty(queryProperties, propertyName, constraint);
+        }
+
+        private static void AddContraintQueryProperty(
+            List<ParseQueryProperty> queryProperties, string propertyName, ParseQueryConstraint constraint)
+        {
+            var queryProperty = queryProperties.SingleOrDefault(qp => qp.PropertyName == propertyName);
+            if (queryProperty != null)
+            {
+                queryProperty.Constraints.Push(constraint);
+            }
+            else
+            {
+                queryProperty = new ParseQueryProperty(propertyName);
+                queryProperty.Constraints.Push(constraint);
+                queryProperties.Add(queryProperty);
+            }
+        }
+
+        private static IEnumerable<ParseQueryProperty> CombineQueryProperties(
+            IEnumerable<ParseQueryProperty> leftProperties, IEnumerable<ParseQueryProperty> rightProperties)
+        {
+            return leftProperties
+                .Union(rightProperties)
+                .GroupBy(p => p.PropertyName)
+                .Select(
+                    x =>
+                    new ParseQueryProperty(x.Key)
+                        {
+                            Constraints = new Stack<ParseQueryConstraint>(x.SelectMany(y => y.Constraints))
+                        });
         }
 
         #endregion

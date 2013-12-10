@@ -32,7 +32,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Generation.Maps;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 
@@ -42,7 +46,18 @@ namespace GoodlyFere.Parse.Linq.Generation
 {
     public class TranslationVisitor : QueryModelVisitorBase
     {
+        #region Constants and Fields
+
+        private static readonly BinaryOperatorMap OperatorMap;
+
+        #endregion
+
         #region Constructors and Destructors
+
+        static TranslationVisitor()
+        {
+            OperatorMap = new BinaryOperatorMap();
+        }
 
         protected TranslationVisitor()
         {
@@ -72,7 +87,25 @@ namespace GoodlyFere.Parse.Linq.Generation
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            Parameters.Add("where", WherePredicateVisitor.Translate(whereClause.Predicate));
+            var queryProperties = RootExpressionVisitor.Translate(whereClause.Predicate);
+            var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+
+            var queryObject = queryProperties.ToDictionary(
+                qp => qp.PropertyName,
+                qp =>
+                    {
+                        if (qp.Constraints.Count == 1 && qp.Constraints.First().Type == ExpressionType.Equal)
+                        {
+                            return qp.Constraints.First().Value;
+                        }
+
+                        return qp.Constraints.ToDictionary(c => OperatorMap[c.Type], c => c.Value);
+                    });
+
+            Parameters.Add("where", JsonConvert.SerializeObject(queryObject, settings));
 
             base.VisitWhereClause(whereClause, queryModel, index);
         }

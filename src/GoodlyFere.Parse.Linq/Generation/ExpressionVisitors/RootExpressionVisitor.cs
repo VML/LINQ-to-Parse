@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryConstraint.cs">
+// <copyright file="WherePredicateVisitor.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,56 +29,50 @@
 
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using System.Linq.Expressions;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Generation
+namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 {
-    internal class ParseQueryProperty
+    internal class RootExpressionVisitor : BaseThrowingExpressionTreeVisitor
     {
         #region Constructors and Destructors
 
-        public ParseQueryProperty(string propertyName)
-            : this()
+        public RootExpressionVisitor()
         {
-            PropertyName = propertyName;
-        }
-
-        public ParseQueryProperty()
-        {
-            Constraints = new Stack<ParseQueryConstraint>();
+            QueryProperties = new List<ParseQueryProperty>();
         }
 
         #endregion
 
-        #region Public Properties
+        #region Properties
 
-        public Stack<ParseQueryConstraint> Constraints { get; set; }
-        public string PropertyName { get; set; }
+        protected List<ParseQueryProperty> QueryProperties { get; private set; }
 
         #endregion
-    }
 
-    internal class ParseQueryConstraint
-    {
-        #region Constructors and Destructors
+        #region Public Methods
 
-        public ParseQueryConstraint(ExpressionType type, object value)
+        public static List<ParseQueryProperty> Translate(Expression predicate)
         {
-            Type = type;
-            Value = value;
+            var visitor = new RootExpressionVisitor();
+            visitor.VisitExpression(predicate);
+            return visitor.QueryProperties;
         }
 
         #endregion
 
-        #region Public Properties
+        #region Methods
 
-        public ExpressionType Type { get; set; }
-        public object Value { get; set; }
+        protected override Expression VisitBinaryExpression(BinaryExpression expression)
+        {
+            BinaryExpressionVisitor.Parse(expression, QueryProperties);
+            return expression;
+        }
 
         #endregion
     }
