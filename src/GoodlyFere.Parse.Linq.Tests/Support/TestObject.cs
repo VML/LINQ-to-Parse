@@ -51,6 +51,9 @@ namespace GoodlyFere.Parse.Linq.Tests.Support
         [DataMember(Name = "age")]
         public int Age { get; set; }
 
+        [DataMember(Name = "anotherName")]
+        public string AnotherName { get; set; }
+
         [DataMember(Name = "firstName")]
         public string FirstName { get; set; }
 

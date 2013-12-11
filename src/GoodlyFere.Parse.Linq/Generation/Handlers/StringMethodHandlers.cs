@@ -30,8 +30,10 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
 using GoodlyFere.Parse.Linq.Generation.ParseQuery;
 
@@ -43,10 +45,15 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
     {
         #region Methods
 
-        internal static BasicQueryPiece Contains(QueryRoot query, MethodCallExpression expression)
+        internal static IList<BasicQueryPiece> Contains(QueryRoot query, MethodCallExpression expression)
         {
             object value = ConstantValueFinder.Find(expression);
-            return new BasicQueryPiece("$regex", value);
+            List<BasicQueryPiece> pieces = new List<BasicQueryPiece>
+                {
+                    new BasicQueryPiece("$regex", value),
+                    new BasicQueryPiece("$options", "mi")
+                };
+            return pieces;
         }
 
         #endregion

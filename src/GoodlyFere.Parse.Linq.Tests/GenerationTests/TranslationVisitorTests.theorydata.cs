@@ -88,21 +88,31 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                 (from to in ParseQueryFactory.Queryable<TestObject>()
                                  where to.FirstName.Contains("Ben")
                                  select to),
-                                "where={\"firstName\":{\"$regex\":\"Ben\"}}"
+                                "where={\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}}"
                             },
                         new object[]
                             {
                                 (from to in ParseQueryFactory.Queryable<TestObject>()
                                  where to.FirstName.Contains("Ben") || to.LastName.Contains("Ramey")
                                  select to),
-                                "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\"}},{\"lastName\":{\"$regex\":\"Ramey\"}}]}"
+                                "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}},{\"lastName\":{\"$regex\":\"Ramey\",\"$options\":\"mi\"}}]}"
                             },
                         new object[]
                             {
                                 (from to in ParseQueryFactory.Queryable<TestObject>()
                                  where to.FirstName.Contains("Ben") || to.LastName.Contains("Ramey") || to.MiddleName.Contains("Steven")
                                  select to),
-                                "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\"}},{\"lastName\":{\"$regex\":\"Ramey\"}},{\"middleName\":{\"$regex\":\"Steven\"}}]}"
+                                "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}},{\"lastName\":{\"$regex\":\"Ramey\",\"$options\":\"mi\"}},{\"middleName\":{\"$regex\":\"Steven\",\"$options\":\"mi\"}}]}"
+                            },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where to.FirstName.Contains("Ben")
+                                 || to.LastName.Contains("Ramey")
+                                 || to.MiddleName.Contains("Steven")
+                                 || to.AnotherName.Contains("Bones")
+                                 select to),
+                                "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}},{\"lastName\":{\"$regex\":\"Ramey\",\"$options\":\"mi\"}},{\"middleName\":{\"$regex\":\"Steven\",\"$options\":\"mi\"}},{\"anotherName\":{\"$regex\":\"Bones\",\"$options\":\"mi\"}}]}"
                             },
                     };
             }

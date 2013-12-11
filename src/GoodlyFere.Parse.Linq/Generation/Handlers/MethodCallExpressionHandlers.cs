@@ -30,6 +30,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
@@ -51,8 +52,11 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
             switch (expression.Method.Name)
             {
                 case "Contains":
-                    BasicQueryPiece op = StringMethodHandlers.Contains(query, expression);
-                    set.Operators.Add(op);
+                    IList<BasicQueryPiece> operands = StringMethodHandlers.Contains(query, expression);
+                    foreach (var op in operands)
+                    {
+                        set.Operators.Add(op);
+                    }
                     query.AddConstraint(set);
                     break;
                 default:
