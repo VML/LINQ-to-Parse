@@ -72,6 +72,13 @@ namespace GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters
         {
             ConstraintSet set = (ConstraintSet)value;
 
+            bool endObject = false;
+            if (writer.WriteState == WriteState.Array)
+            {
+                endObject = true;
+                writer.WriteStartObject();
+            }
+
             writer.WritePropertyName(PropNameResolver.GetResolvedPropertyName(set.Key));
             writer.WriteStartObject();
             foreach (var c in set.Operators)
@@ -80,6 +87,11 @@ namespace GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters
                 writer.WriteValue(c.Value);
             }
             writer.WriteEndObject();
+
+            if (endObject)
+            {
+                writer.WriteEndObject();
+            }
         }
 
         #endregion
