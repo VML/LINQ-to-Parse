@@ -68,10 +68,17 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
             QueryRoot leftQuery = RootExpressionVisitor.Translate(binExpr.Left);
             QueryRoot rightQuery = RootExpressionVisitor.Translate(binExpr.Right);
 
-            OrConstraint or = new OrConstraint();
+            OrConstraint or = ((OrConstraint)query.FindForProperty("$or")) ?? new OrConstraint();
             foreach (var c in leftQuery.Union(rightQuery))
             {
-                or.Operands.Add(c);
+                if (c is OrConstraint)
+                {
+                    or.Merge((OrConstraint)c);
+                }
+                else
+                {
+                    or.Operands.Add(c);
+                }
             }
 
             query.AddConstraint(or);

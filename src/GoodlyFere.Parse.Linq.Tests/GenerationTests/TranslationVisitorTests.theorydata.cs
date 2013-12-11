@@ -97,6 +97,13 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                  select to),
                                 "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\"}},{\"lastName\":{\"$regex\":\"Ramey\"}}]}"
                             },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where to.FirstName.Contains("Ben") || to.LastName.Contains("Ramey") || to.MiddleName.Contains("Steven")
+                                 select to),
+                                "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\"}},{\"lastName\":{\"$regex\":\"Ramey\"}},{\"middleName\":{\"$regex\":\"Steven\"}}]}"
+                            },
                     };
             }
         }

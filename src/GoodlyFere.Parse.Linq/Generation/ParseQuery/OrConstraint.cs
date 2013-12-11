@@ -78,5 +78,17 @@ namespace GoodlyFere.Parse.Linq.Generation.ParseQuery
         public object Value { get; private set; }
 
         #endregion
+
+        #region Public Methods
+
+        public void Merge(OrConstraint anotherOr)
+        {
+            foreach (var operand in anotherOr.Operands)
+            {
+                Operands.Add(operand);
+            }
+        }
+
+        #endregion
     }
 }

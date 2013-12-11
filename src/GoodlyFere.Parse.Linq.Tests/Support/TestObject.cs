@@ -60,6 +60,9 @@ namespace GoodlyFere.Parse.Linq.Tests.Support
         [DataMember(Name = "lastName")]
         public string LastName { get; set; }
 
+        [DataMember(Name = "middleName")]
+        public string MiddleName { get; set; }
+
         [DataMember(Name = "objectId")]
         public string ObjectId { get; set; }
 
