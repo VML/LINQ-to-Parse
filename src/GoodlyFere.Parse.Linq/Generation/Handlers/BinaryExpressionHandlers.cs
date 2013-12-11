@@ -30,7 +30,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
@@ -45,7 +44,7 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
     {
         #region Methods
 
-        internal static void Equals(QueryRoot query, BinaryExpression binExpr)
+        internal static void HandleEquals(QueryRoot query, BinaryExpression binExpr)
         {
             object value = ConstantValueFinder.Find(binExpr);
             string propertyName = MemberNameFinder.Find(binExpr);
@@ -54,7 +53,18 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
             query.AddConstraint(constraint);
         }
 
-        internal static void LogicalAnd(QueryRoot query, BinaryExpression binExpr)
+        internal static void HandleGeneralBinary(
+            QueryRoot query, BinaryExpression binExpr, ExpressionType exprType)
+        {
+            object value = ConstantValueFinder.Find(binExpr);
+            string propertyName = MemberNameFinder.Find(binExpr);
+
+            var set = new ConstraintSet(propertyName);
+            set.Operators.Add(new BasicQueryPiece(BinaryOperatorMap.Get(exprType), value));
+            query.AddConstraint(set);
+        }
+
+        internal static void HandleLogicalAnd(QueryRoot query, BinaryExpression binExpr)
         {
             QueryRoot leftQuery = RootExpressionVisitor.Translate(binExpr.Left);
             QueryRoot rightQuery = RootExpressionVisitor.Translate(binExpr.Right);
@@ -63,7 +73,7 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
             query.AddConstraintRange(rightQuery);
         }
 
-        internal static void LogicalOr(QueryRoot query, BinaryExpression binExpr)
+        internal static void HandleLogicalOr(QueryRoot query, BinaryExpression binExpr)
         {
             QueryRoot leftQuery = RootExpressionVisitor.Translate(binExpr.Left);
             QueryRoot rightQuery = RootExpressionVisitor.Translate(binExpr.Right);
@@ -82,17 +92,6 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
             }
 
             query.AddConstraint(or);
-        }
-
-        internal static void Other(
-            QueryRoot query, BinaryExpression binExpr, ExpressionType exprType)
-        {
-            object value = ConstantValueFinder.Find(binExpr);
-            string propertyName = MemberNameFinder.Find(binExpr);
-
-            var set = new ConstraintSet(propertyName);
-            set.Operators.Add(new BasicQueryPiece(BinaryOperatorMap.Get(exprType), value));
-            query.AddConstraint(set);
         }
 
         #endregion

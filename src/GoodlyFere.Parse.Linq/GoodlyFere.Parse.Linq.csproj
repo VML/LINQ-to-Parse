@@ -55,6 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generation\Handlers\ResultOperatorHandlers.cs" />
+    <Compile Include="Generation\Maps\ResultOperatorMap.cs" />
     <Compile Include="Generation\ParseQuery\BasicQueryPiece.cs" />
     <Compile Include="Generation\ParseQuery\JsonConverters\ConstraintSetJsonConverter.cs" />
     <Compile Include="Generation\ParseQuery\JsonConverters\QueryRootJsonConverter.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Generation\ParseQuery\ConstraintSet.cs" />
     <Compile Include="Generation\Maps\MethodCallExpressionMap.cs" />
     <Compile Include="Generation\ParseQuery\QueryRoot.cs" />
+    <Compile Include="Generation\SubQueryTranslationVisitor.cs" />
     <Compile Include="Generation\TranslationVisitor.cs" />
     <Compile Include="Generation\ExpressionVisitors\RootExpressionVisitor.cs" />
     <Compile Include="LogExtensions.cs" />

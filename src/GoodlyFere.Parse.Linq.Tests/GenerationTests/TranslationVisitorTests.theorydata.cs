@@ -114,6 +114,13 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                  select to),
                                 "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}},{\"lastName\":{\"$regex\":\"Ramey\",\"$options\":\"mi\"}},{\"middleName\":{\"$regex\":\"Steven\",\"$options\":\"mi\"}},{\"anotherName\":{\"$regex\":\"Bones\",\"$options\":\"mi\"}}]}"
                             },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where new[] { 1, 2, 92 }.Contains(to.Age)
+                                 select to),
+                                "where={\"age\":{\"$in\":[1,2,92]}}"
+                            },
                     };
             }
         }

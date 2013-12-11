@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StringMethodHandlers.cs">
+// <copyright file="ResultOperatorMap.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,29 +30,53 @@
 #region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Generation.Handlers;
 using GoodlyFere.Parse.Linq.Generation.ParseQuery;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Generation.Handlers
+namespace GoodlyFere.Parse.Linq.Generation.Maps
 {
-    internal static class StringMethodHandlers
-    {
-        #region Methods
+    internal delegate ConstraintSet ResultOperatorFactoryMethod(
+        ResultOperatorBase resultOperator, IEnumerable values);
 
-        internal static IList<BasicQueryPiece> HandleContains(QueryRoot query, MethodCallExpression expression)
+    internal class ResultOperatorMap : Dictionary<Type, ResultOperatorFactoryMethod>
+    {
+        #region Constants and Fields
+
+        private static readonly ResultOperatorMap Instance;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        static ResultOperatorMap()
         {
-            object value = ConstantValueFinder.Find(expression);
-            List<BasicQueryPiece> pieces = new List<BasicQueryPiece>
-                {
-                    new BasicQueryPiece("$regex", value),
-                    new BasicQueryPiece("$options", "mi")
-                };
-            return pieces;
+            Instance = new ResultOperatorMap();
+        }
+
+        protected ResultOperatorMap()
+        {
+            Add(typeof(ContainsResultOperator), ResultOperatorHandlers.HandleIEnumerableMethods);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public static ResultOperatorFactoryMethod Get(Type type)
+        {
+            return Has(type) ? Instance[type] : null;
+        }
+
+        public static bool Has(Type type)
+        {
+            return Instance.ContainsKey(type);
         }
 
         #endregion

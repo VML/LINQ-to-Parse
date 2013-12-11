@@ -34,6 +34,7 @@ using System;
 using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Generation.Maps;
 using GoodlyFere.Parse.Linq.Generation.ParseQuery;
+using Remotion.Linq.Clauses.Expressions;
 
 #endregion
 
@@ -41,20 +42,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 {
     internal class RootExpressionVisitor : BaseThrowingExpressionTreeVisitor
     {
-        #region Constants and Fields
-
-        private static readonly BinaryExpressionMap BinaryExpressionMap;
-        private static readonly MethodCallExpressionMap MethodCallExpressionMap;
-
-        #endregion
-
         #region Constructors and Destructors
-
-        static RootExpressionVisitor()
-        {
-            BinaryExpressionMap = new BinaryExpressionMap();
-            MethodCallExpressionMap = new MethodCallExpressionMap();
-        }
 
         public RootExpressionVisitor()
         {
@@ -84,9 +72,9 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
-            if (BinaryExpressionMap.ContainsKey(expression.NodeType))
+            if (BinaryExpressionMap.Has(expression.NodeType))
             {
-                BinaryExpressionMap[expression.NodeType](Query, expression);
+                BinaryExpressionMap.Get(expression.NodeType)(Query, expression);
                 return expression;
             }
 
@@ -97,13 +85,20 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
         {
             Type declaringType = expression.Method.DeclaringType;
 
-            if (MethodCallExpressionMap.ContainsKey(declaringType))
+            if (MethodCallExpressionMap.Has(declaringType))
             {
-                MethodCallExpressionMap[declaringType](Query, expression);
+                MethodCallExpressionMap.Get(declaringType)(Query, expression);
                 return expression;
             }
 
             return base.VisitMethodCallExpression(expression);
+        }
+
+        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        {
+            QueryRoot subQueryRoot = SubQueryTranslationVisitor.Translate(expression.QueryModel);
+            Query.AddConstraintRange(subQueryRoot);
+            return expression;
         }
 
         #endregion

@@ -84,7 +84,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters
             foreach (var c in set.Operators)
             {
                 writer.WritePropertyName(c.Key);
-                writer.WriteValue(c.Value);
+                serializer.Serialize(writer, c.Value);
             }
             writer.WriteEndObject();
 

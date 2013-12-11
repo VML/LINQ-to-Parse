@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionMap.cs">
+// <copyright file="SubQueryTranslationVisitor.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,52 +30,71 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Handlers;
+using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Generation.Maps;
 using GoodlyFere.Parse.Linq.Generation.ParseQuery;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Generation.Maps
+namespace GoodlyFere.Parse.Linq.Generation
 {
-    internal delegate void MethodCallFactoryMethod(
-        QueryRoot query, MethodCallExpression expression);
-
-    internal class MethodCallExpressionMap : Dictionary<Type, MethodCallFactoryMethod>
+    internal class SubQueryTranslationVisitor : QueryModelVisitorBase
     {
         #region Constants and Fields
 
-        private static readonly MethodCallExpressionMap _instance;
+        private IEnumerable _values;
 
         #endregion
 
         #region Constructors and Destructors
 
-        static MethodCallExpressionMap()
+        public SubQueryTranslationVisitor()
         {
-            _instance = new MethodCallExpressionMap();
+            Query = new QueryRoot();
         }
 
-        protected MethodCallExpressionMap()
-        {
-            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
-        }
+        #endregion
+
+        #region Properties
+
+        protected QueryRoot Query { get; set; }
 
         #endregion
 
         #region Public Methods
 
-        public static MethodCallFactoryMethod Get(Type type)
+        public static QueryRoot Translate(QueryModel model)
         {
-            return Has(type) ? _instance[type] : null;
+            var visitor = new SubQueryTranslationVisitor();
+            visitor.VisitQueryModel(model);
+
+            return visitor.Query;
         }
 
-        public static bool Has(Type type)
+        public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
-            return _instance.ContainsKey(type);
+            if (fromClause.FromExpression is ConstantExpression)
+            {
+                _values = (fromClause.FromExpression as ConstantExpression).Value as IEnumerable;
+            }
+
+            base.VisitMainFromClause(fromClause, queryModel);
+        }
+
+        public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
+        {
+            if (ResultOperatorMap.Has(resultOperator.GetType()))
+            {
+                ConstraintSet set = ResultOperatorMap.Get(resultOperator.GetType()).Invoke(resultOperator, _values);
+                Query.AddConstraint(set);
+            }
+
+            base.VisitResultOperator(resultOperator, queryModel, index);
         }
 
         #endregion

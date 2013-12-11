@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StringMethodHandlers.cs">
+// <copyright file="ResultOperatorHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,29 +30,30 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
-using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
 using GoodlyFere.Parse.Linq.Generation.ParseQuery;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
 namespace GoodlyFere.Parse.Linq.Generation.Handlers
 {
-    internal static class StringMethodHandlers
+    internal class ResultOperatorHandlers
     {
-        #region Methods
+        #region Public Methods
 
-        internal static IList<BasicQueryPiece> HandleContains(QueryRoot query, MethodCallExpression expression)
+        public static ConstraintSet HandleIEnumerableMethods(ResultOperatorBase resultOperator, IEnumerable values)
         {
-            object value = ConstantValueFinder.Find(expression);
-            List<BasicQueryPiece> pieces = new List<BasicQueryPiece>
-                {
-                    new BasicQueryPiece("$regex", value),
-                    new BasicQueryPiece("$options", "mi")
-                };
-            return pieces;
+            ContainsResultOperator containsOp = (ContainsResultOperator)resultOperator;
+            string propName = MemberNameFinder.Find(containsOp.Item);
+            
+            ConstraintSet inSet = new ConstraintSet(propName);
+            inSet.Operators.Add(new BasicQueryPiece("$in", values));
+
+            return inSet;
         }
 
         #endregion

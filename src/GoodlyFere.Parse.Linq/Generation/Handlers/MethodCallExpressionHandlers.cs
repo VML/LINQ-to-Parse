@@ -44,7 +44,7 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
     {
         #region Methods
 
-        internal static void String(QueryRoot query, MethodCallExpression expression)
+        internal static void HandleStringMethods(QueryRoot query, MethodCallExpression expression)
         {
             string propertyName = MemberNameFinder.Find(expression.Object);
             ConstraintSet set = new ConstraintSet(propertyName);
@@ -52,7 +52,7 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
             switch (expression.Method.Name)
             {
                 case "Contains":
-                    IList<BasicQueryPiece> operands = StringMethodHandlers.Contains(query, expression);
+                    IList<BasicQueryPiece> operands = StringMethodHandlers.HandleContains(query, expression);
                     foreach (var op in operands)
                     {
                         set.Operators.Add(op);

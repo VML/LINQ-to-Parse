@@ -45,32 +45,57 @@ namespace GoodlyFere.Parse.Linq.Generation.Maps
 
     internal class BinaryExpressionMap : Dictionary<ExpressionType, BinaryExpressionFactoryMethod>
     {
+        #region Constants and Fields
+
+        private static readonly BinaryExpressionMap _instance;
+
+        #endregion
+
         #region Constructors and Destructors
 
-        public BinaryExpressionMap()
+        static BinaryExpressionMap()
+        {
+            _instance = new BinaryExpressionMap();
+        }
+
+        protected BinaryExpressionMap()
         {
             // logical operators
-            Add(ExpressionType.AndAlso, BinaryExpressionHandlers.LogicalAnd);
+            Add(ExpressionType.AndAlso, BinaryExpressionHandlers.HandleLogicalAnd);
             // logical operators
-            Add(ExpressionType.OrElse, BinaryExpressionHandlers.LogicalOr);
+            Add(ExpressionType.OrElse, BinaryExpressionHandlers.HandleLogicalOr);
 
             // comparison operators
-            Add(ExpressionType.Equal, BinaryExpressionHandlers.Equals);
+            Add(ExpressionType.Equal, BinaryExpressionHandlers.HandleEquals);
             Add(
                 ExpressionType.NotEqual,
-                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.NotEqual));
+                (qp, es) => BinaryExpressionHandlers.HandleGeneralBinary(qp, es, ExpressionType.NotEqual));
             Add(
                 ExpressionType.GreaterThan,
-                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.GreaterThan));
+                (qp, es) => BinaryExpressionHandlers.HandleGeneralBinary(qp, es, ExpressionType.GreaterThan));
             Add(
                 ExpressionType.GreaterThanOrEqual,
-                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.GreaterThanOrEqual));
+                (qp, es) => BinaryExpressionHandlers.HandleGeneralBinary(qp, es, ExpressionType.GreaterThanOrEqual));
             Add(
                 ExpressionType.LessThan,
-                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.LessThan));
+                (qp, es) => BinaryExpressionHandlers.HandleGeneralBinary(qp, es, ExpressionType.LessThan));
             Add(
                 ExpressionType.LessThanOrEqual,
-                (qp, es) => BinaryExpressionHandlers.Other(qp, es, ExpressionType.LessThanOrEqual));
+                (qp, es) => BinaryExpressionHandlers.HandleGeneralBinary(qp, es, ExpressionType.LessThanOrEqual));
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public static BinaryExpressionFactoryMethod Get(ExpressionType type)
+        {
+            return Has(type) ? _instance[type] : null;
+        }
+
+        public static bool Has(ExpressionType type)
+        {
+            return _instance.ContainsKey(type);
         }
 
         #endregion
