@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConstantValueFinder.cs">
+// <copyright file="ConstraintSetJsonConverter.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,43 +31,55 @@
 
 using System;
 using System.Linq;
-using System.Linq.Expressions;
-using Remotion.Linq.Parsing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters
 {
-    internal class ConstantValueFinder : ExpressionTreeVisitor
+    internal class ConstraintSetJsonConverter : JsonConverter
     {
+        #region Constants and Fields
+
+        private static readonly CamelCasePropertyNamesContractResolver PropNameResolver;
+
+        #endregion
+
         #region Constructors and Destructors
 
-        protected ConstantValueFinder()
+        static ConstraintSetJsonConverter()
         {
+            PropNameResolver = new CamelCasePropertyNamesContractResolver();
         }
 
         #endregion
 
-        #region Properties
+        #region Public Methods
 
-        protected object Value { get; private set; }
-
-        #endregion
-
-        #region Methods
-
-        internal static object Find(Expression expression)
+        public override bool CanConvert(Type objectType)
         {
-            var visitor = new ConstantValueFinder();
-            visitor.VisitExpression(expression);
-
-            return visitor.Value;
+            return objectType == typeof(ConstraintSet);
         }
 
-        protected override Expression VisitConstantExpression(ConstantExpression expression)
+        public override object ReadJson(
+            JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            Value = expression.Value;
-            return expression;
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            ConstraintSet set = (ConstraintSet)value;
+
+            writer.WritePropertyName(PropNameResolver.GetResolvedPropertyName(set.Key));
+            writer.WriteStartObject();
+            foreach (var c in set.Operators)
+            {
+                writer.WritePropertyName(c.Key);
+                writer.WriteValue(c.Value);
+            }
+            writer.WriteEndObject();
         }
 
         #endregion

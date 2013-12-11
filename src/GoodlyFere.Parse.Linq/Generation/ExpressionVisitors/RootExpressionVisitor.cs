@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="WherePredicateVisitor.cs">
+// <copyright file="RootExpressionVisitor.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,12 +29,11 @@
 
 #region Usings
 
-using System.Collections.Generic;
 using System.Linq;
 using System;
 using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Contraints;
 using GoodlyFere.Parse.Linq.Generation.Maps;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery;
 
 #endregion
 
@@ -59,24 +58,24 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 
         public RootExpressionVisitor()
         {
-            QueryProperties = new List<ConstraintSet>();
+            Query = new QueryRoot();
         }
 
         #endregion
 
         #region Properties
 
-        protected List<ConstraintSet> QueryProperties { get; private set; }
+        protected QueryRoot Query { get; private set; }
 
         #endregion
 
         #region Public Methods
 
-        public static List<ConstraintSet> Translate(Expression predicate)
+        public static QueryRoot Translate(Expression predicate)
         {
             var visitor = new RootExpressionVisitor();
             visitor.VisitExpression(predicate);
-            return visitor.QueryProperties;
+            return visitor.Query;
         }
 
         #endregion
@@ -87,7 +86,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
         {
             if (BinaryExpressionMap.ContainsKey(expression.NodeType))
             {
-                BinaryExpressionMap[expression.NodeType](QueryProperties, expression);
+                BinaryExpressionMap[expression.NodeType](Query, expression);
                 return expression;
             }
 
@@ -100,7 +99,7 @@ namespace GoodlyFere.Parse.Linq.Generation.ExpressionVisitors
 
             if (MethodCallExpressionMap.ContainsKey(declaringType))
             {
-                MethodCallExpressionMap[declaringType](QueryProperties, expression);
+                MethodCallExpressionMap[declaringType](Query, expression);
                 return expression;
             }
 

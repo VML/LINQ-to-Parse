@@ -33,15 +33,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Contraints;
 using GoodlyFere.Parse.Linq.Generation.Handlers;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery;
 
 #endregion
 
 namespace GoodlyFere.Parse.Linq.Generation.Maps
 {
     internal delegate void BinaryExpressionFactoryMethod(
-        List<ConstraintSet> queryProperties, BinaryExpression binExpr);
+        QueryRoot query, BinaryExpression binExpr);
 
     internal class BinaryExpressionMap : Dictionary<ExpressionType, BinaryExpressionFactoryMethod>
     {

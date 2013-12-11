@@ -55,7 +55,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generation\Contraints\ConstraintSet.cs" />
+    <Compile Include="Generation\ParseQuery\BasicQueryPiece.cs" />
+    <Compile Include="Generation\ParseQuery\JsonConverters\ConstraintSetJsonConverter.cs" />
+    <Compile Include="Generation\ParseQuery\JsonConverters\QueryRootJsonConverter.cs" />
+    <Compile Include="Generation\ParseQuery\EqualsConstraint.cs" />
+    <Compile Include="Generation\ParseQuery\IQueryPiece.cs" />
+    <Compile Include="Generation\ParseQuery\OrConstraint.cs" />
+    <Compile Include="Generation\ParseQuery\JsonConverters\QueryPieceJsonConverter.cs" />
     <Compile Include="Generation\ExpressionVisitors\BaseThrowingExpressionTreeVisitor.cs" />
     <Compile Include="Generation\ExpressionVisitors\ConstantValueFinder.cs" />
     <Compile Include="Generation\ExpressionVisitors\MemberNameFinder.cs" />
@@ -64,8 +70,9 @@
     <Compile Include="Generation\Handlers\MethodCallExpressionHandlers.cs" />
     <Compile Include="Generation\Maps\BinaryExpressionMap.cs" />
     <Compile Include="Generation\Maps\BinaryOperatorMap.cs" />
-    <Compile Include="Generation\Contraints\Constraint.cs" />
+    <Compile Include="Generation\ParseQuery\ConstraintSet.cs" />
     <Compile Include="Generation\Maps\MethodCallExpressionMap.cs" />
+    <Compile Include="Generation\ParseQuery\QueryRoot.cs" />
     <Compile Include="Generation\TranslationVisitor.cs" />
     <Compile Include="Generation\ExpressionVisitors\RootExpressionVisitor.cs" />
     <Compile Include="LogExtensions.cs" />

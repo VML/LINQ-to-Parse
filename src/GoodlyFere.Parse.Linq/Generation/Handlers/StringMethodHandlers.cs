@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BinaryExpressionHandlers.cs">
+// <copyright file="StringMethodHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,11 +30,10 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Contraints;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery;
 
 #endregion
 
@@ -44,10 +43,10 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
     {
         #region Methods
 
-        internal static Constraint Contains(List<ConstraintSet> queryProperties, MethodCallExpression expression)
+        internal static BasicQueryPiece Contains(QueryRoot query, MethodCallExpression expression)
         {
             object value = ConstantValueFinder.Find(expression);
-            return new Constraint("$regex", value);
+            return new BasicQueryPiece("$regex", value);
         }
 
         #endregion

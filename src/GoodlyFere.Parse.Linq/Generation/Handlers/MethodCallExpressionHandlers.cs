@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BinaryExpressionHandlers.cs">
+// <copyright file="MethodCallExpressionHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,11 +30,10 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Contraints;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery;
 
 #endregion
 
@@ -44,30 +43,21 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
     {
         #region Methods
 
-        internal static void String(List<ConstraintSet> queryProperties, MethodCallExpression expression)
+        internal static void String(QueryRoot query, MethodCallExpression expression)
         {
             string propertyName = MemberNameFinder.Find(expression.Object);
-            ConstraintSet set = queryProperties.SingleOrDefault(cs => cs.PropertyName == propertyName);
-
-            if (set == null)
-            {
-                set = new ConstraintSet(propertyName);
-                queryProperties.Add(set);
-            }
+            ConstraintSet set = new ConstraintSet(propertyName);
 
             switch (expression.Method.Name)
             {
                 case "Contains":
-                    set.Constraints.Enqueue(StringMethodHandlers.Contains(queryProperties, expression));
+                    BasicQueryPiece op = StringMethodHandlers.Contains(query, expression);
+                    set.Operators.Add(op);
+                    query.AddConstraint(set);
                     break;
                 default:
                     throw new Exception(string.Format("Method call not handled! {0}", expression.Method.Name));
             }
-        }
-
-        private static bool DeclaringTypeIsString(MethodCallExpression expression)
-        {
-            return expression.Method.DeclaringType == typeof(String);
         }
 
         #endregion

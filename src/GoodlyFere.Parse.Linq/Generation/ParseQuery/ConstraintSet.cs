@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryResults.cs">
+// <copyright file="ConstraintSet.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,21 +29,65 @@
 
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery
 {
-    public class ParseQueryResults<T>
+    [JsonConverter(typeof(ConstraintSetJsonConverter))]
+    internal class ConstraintSet : IQueryPiece
     {
+        #region Constants and Fields
+
+        private IList<BasicQueryPiece> _operators;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        public ConstraintSet(string key)
+        {
+            Key = key;
+            Operators = new List<BasicQueryPiece>();
+        }
+
+        #endregion
+
         #region Public Properties
 
-        public int Code { get; set; }
-        public string Error { get; set; }
-        public List<T> Results { get; set; }
+        public string Key { get; private set; }
+
+        public IList<BasicQueryPiece> Operators
+        {
+            get
+            {
+                return _operators;
+            }
+            private set
+            {
+                _operators = value;
+                Value = value;
+            }
+        }
+
+        public object Value { get; set; }
+
+        #endregion
+
+        #region Public Methods
+
+        public void Merge(ConstraintSet anotherSet)
+        {
+            foreach (var c in anotherSet.Operators)
+            {
+                Operators.Add(c);
+            }
+        }
 
         #endregion
     }

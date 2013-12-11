@@ -47,7 +47,7 @@ namespace GoodlyFere.Parse.Linq.Generation
     public class TranslationVisitor : QueryModelVisitorBase
     {
         #region Constructors and Destructors
-        
+
         protected TranslationVisitor()
         {
             Parameters = new Dictionary<string, string>();
@@ -76,26 +76,13 @@ namespace GoodlyFere.Parse.Linq.Generation
 
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            var queryProperties = RootExpressionVisitor.Translate(whereClause.Predicate);
+            var query = RootExpressionVisitor.Translate(whereClause.Predicate);
             var settings = new JsonSerializerSettings
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 };
-
-            var queryObject = queryProperties.ToDictionary(
-                qp => qp.PropertyName,
-                qp =>
-                    {
-                        if (qp.Constraints.Count == 1
-                            && qp.Constraints.First().Type == ExpressionType.Equal)
-                        {
-                            return qp.Constraints.First().Value;
-                        }
-
-                        return qp.Constraints.ToDictionary(c => BinaryOperatorMap.Get(c.Type) ?? c.ExpressionName, c => c.Value);
-                    });
-
-            Parameters.Add("where", JsonConvert.SerializeObject(queryObject, settings));
+            
+            Parameters.Add("where", JsonConvert.SerializeObject(query, settings));
 
             base.VisitWhereClause(whereClause, queryModel, index);
         }

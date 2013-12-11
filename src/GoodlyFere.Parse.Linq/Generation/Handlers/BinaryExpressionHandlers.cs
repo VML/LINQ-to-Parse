@@ -33,8 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Contraints;
 using GoodlyFere.Parse.Linq.Generation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Generation.Maps;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery;
 
 #endregion
 
@@ -44,77 +45,47 @@ namespace GoodlyFere.Parse.Linq.Generation.Handlers
     {
         #region Methods
 
-        internal static void Equals(List<ConstraintSet> queryProperties, BinaryExpression binExpr)
+        internal static void Equals(QueryRoot query, BinaryExpression binExpr)
         {
             object value = ConstantValueFinder.Find(binExpr);
             string propertyName = MemberNameFinder.Find(binExpr);
 
-            var constraint = new Constraint(ExpressionType.Equal, value);
-            AddContraintQueryProperty(queryProperties, propertyName, constraint);
+            var constraint = new EqualsConstraint(propertyName, value);
+            query.AddConstraint(constraint);
         }
 
-        internal static void LogicalAnd(List<ConstraintSet> queryProperties, BinaryExpression binExpr)
+        internal static void LogicalAnd(QueryRoot query, BinaryExpression binExpr)
         {
-            List<ConstraintSet> leftProperties = RootExpressionVisitor.Translate(binExpr.Left);
-            List<ConstraintSet> rightProperties = RootExpressionVisitor.Translate(binExpr.Right);
+            QueryRoot leftQuery = RootExpressionVisitor.Translate(binExpr.Left);
+            QueryRoot rightQuery = RootExpressionVisitor.Translate(binExpr.Right);
 
-            IEnumerable<ConstraintSet> combined = CombineQueryProperties(leftProperties, rightProperties);
-            IEnumerable<ConstraintSet> newProperties = CombineQueryProperties(queryProperties, combined);
-
-            queryProperties.Clear();
-            queryProperties.AddRange(newProperties);
+            query.AddConstraintRange(leftQuery);
+            query.AddConstraintRange(rightQuery);
         }
 
-        internal static void LogicalOr(List<ConstraintSet> queryProperties, BinaryExpression binExpr)
+        internal static void LogicalOr(QueryRoot query, BinaryExpression binExpr)
         {
-            List<ConstraintSet> leftProperties = RootExpressionVisitor.Translate(binExpr.Left);
-            List<ConstraintSet> rightProperties = RootExpressionVisitor.Translate(binExpr.Right);
+            QueryRoot leftQuery = RootExpressionVisitor.Translate(binExpr.Left);
+            QueryRoot rightQuery = RootExpressionVisitor.Translate(binExpr.Right);
 
-            IEnumerable<ConstraintSet> combined = CombineQueryProperties(leftProperties, rightProperties);
-            IEnumerable<ConstraintSet> newProperties = CombineQueryProperties(queryProperties, combined);
+            OrConstraint or = new OrConstraint();
+            foreach (var c in leftQuery.Union(rightQuery))
+            {
+                or.Operands.Add(c);
+            }
 
-            queryProperties.Clear();
-            queryProperties.AddRange(newProperties);
+            query.AddConstraint(or);
         }
 
         internal static void Other(
-            List<ConstraintSet> queryProperties, BinaryExpression binExpr, ExpressionType exprType)
+            QueryRoot query, BinaryExpression binExpr, ExpressionType exprType)
         {
             object value = ConstantValueFinder.Find(binExpr);
             string propertyName = MemberNameFinder.Find(binExpr);
 
-            var constraint = new Constraint(exprType, value);
-            AddContraintQueryProperty(queryProperties, propertyName, constraint);
-        }
-
-        private static void AddContraintQueryProperty(
-            List<ConstraintSet> queryProperties, string propertyName, Constraint constraint)
-        {
-            var queryProperty = queryProperties.SingleOrDefault(qp => qp.PropertyName == propertyName);
-            if (queryProperty != null)
-            {
-                queryProperty.Constraints.Enqueue(constraint);
-            }
-            else
-            {
-                queryProperty = new ConstraintSet(propertyName);
-                queryProperty.Constraints.Enqueue(constraint);
-                queryProperties.Add(queryProperty);
-            }
-        }
-
-        private static IEnumerable<ConstraintSet> CombineQueryProperties(
-            IEnumerable<ConstraintSet> leftProperties, IEnumerable<ConstraintSet> rightProperties)
-        {
-            return leftProperties
-                .Union(rightProperties)
-                .GroupBy(p => p.PropertyName)
-                .Select(
-                    x =>
-                    new ConstraintSet(x.Key)
-                        {
-                            Constraints = new Queue<Constraint>(x.SelectMany(y => y.Constraints))
-                        });
+            var set = new ConstraintSet(propertyName);
+            set.Operators.Add(new BasicQueryPiece(BinaryOperatorMap.Get(exprType), value));
+            query.AddConstraint(set);
         }
 
         #endregion

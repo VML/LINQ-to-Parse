@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryResults.cs">
+// <copyright file="QueryPieceJsonConverter.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,21 +29,39 @@
 
 #region Usings
 
-using System.Collections.Generic;
-using System.Linq;
 using System;
+using System.Linq;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters
 {
-    public class ParseQueryResults<T>
+    internal class QueryRootJsonConverter : JsonConverter
     {
-        #region Public Properties
+        #region Public Methods
 
-        public int Code { get; set; }
-        public string Error { get; set; }
-        public List<T> Results { get; set; }
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(QueryRoot);
+        }
+
+        public override object ReadJson(
+            JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            QueryRoot query = (QueryRoot)value;
+            writer.WriteStartObject();
+            foreach (var piece in query)
+            {
+                serializer.Serialize(writer, piece);
+            }
+            writer.WriteEndObject();
+        }
 
         #endregion
     }

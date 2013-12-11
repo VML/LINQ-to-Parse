@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryResults.cs">
+// <copyright file="OrConstraint.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,21 +29,53 @@
 
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery
 {
-    public class ParseQueryResults<T>
+    [JsonConverter(typeof(QueryPieceJsonConverter))]
+    internal class OrConstraint : IQueryPiece
     {
+        #region Constants and Fields
+
+        private IList<IQueryPiece> _operands;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        public OrConstraint()
+        {
+            Key = "$or";
+            Operands = new List<IQueryPiece>();
+        }
+
+        #endregion
+
         #region Public Properties
 
-        public int Code { get; set; }
-        public string Error { get; set; }
-        public List<T> Results { get; set; }
+        public string Key { get; private set; }
+
+        public IList<IQueryPiece> Operands
+        {
+            get
+            {
+                return _operands;
+            }
+            private set
+            {
+                _operands = value;
+                Value = value;
+            }
+        }
+
+        public object Value { get; private set; }
 
         #endregion
     }

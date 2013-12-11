@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryResults.cs">
+// <copyright file="EqualsConstraint.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,21 +29,25 @@
 
 #region Usings
 
-using System.Collections.Generic;
-using System.Linq;
 using System;
+using System.Linq;
+using GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery
 {
-    public class ParseQueryResults<T>
+    [JsonConverter(typeof(QueryPieceJsonConverter))]
+    internal class EqualsConstraint : BasicQueryPiece
     {
-        #region Public Properties
+        #region Constructors and Destructors
 
-        public int Code { get; set; }
-        public string Error { get; set; }
-        public List<T> Results { get; set; }
+        public EqualsConstraint(string key, object value)
+        {
+            Key = key;
+            Value = value;
+        }
 
         #endregion
     }

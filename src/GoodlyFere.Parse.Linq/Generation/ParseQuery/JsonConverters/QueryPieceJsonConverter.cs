@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseContext.cs">
+// <copyright file="QueryPieceJsonConverter.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,49 +31,61 @@
 
 using System;
 using System.Linq;
-using GoodlyFere.Parse.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery.JsonConverters
 {
-    public class ParseContext
+    internal class QueryPieceJsonConverter : JsonConverter
     {
         #region Constants and Fields
 
-        private readonly ParseApi _api;
-        private static ParseContext _instance;
-        private IParseApiSettingsProvider _settingsProvider;
+        private static readonly CamelCasePropertyNamesContractResolver PropNameResolver;
 
         #endregion
 
         #region Constructors and Destructors
 
-        private ParseContext(IParseApiSettingsProvider settingsProvider)
+        static QueryPieceJsonConverter()
         {
-            _settingsProvider = settingsProvider;
-            _api = new ParseApi(settingsProvider);
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        public static ParseApi API
-        {
-            get
-            {
-                return _instance._api;
-            }
+            PropNameResolver = new CamelCasePropertyNamesContractResolver();
         }
 
         #endregion
 
         #region Public Methods
 
-        public static void Initialize(IParseApiSettingsProvider settingsProvider)
+        public override bool CanConvert(Type objectType)
         {
-            _instance = new ParseContext(settingsProvider);
+            return typeof(IQueryPiece).IsAssignableFrom(objectType);
+        }
+
+        public override object ReadJson(
+            JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            IQueryPiece qp = (IQueryPiece)value;
+
+            bool endObject = false;
+            if (writer.WriteState == WriteState.Array)
+            {
+                endObject = true;
+                writer.WriteStartObject();
+            }
+
+            writer.WritePropertyName(PropNameResolver.GetResolvedPropertyName(qp.Key));
+            serializer.Serialize(writer, qp.Value);
+
+            if (endObject)
+            {
+                writer.WriteEndObject();
+            }
         }
 
         #endregion

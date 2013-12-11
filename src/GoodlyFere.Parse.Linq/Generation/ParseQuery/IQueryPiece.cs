@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryConstraint.cs">
+// <copyright file="IQueryPiece.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,37 +31,17 @@
 
 using System;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Generation.Maps;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Generation.Contraints
+namespace GoodlyFere.Parse.Linq.Generation.ParseQuery
 {
-    internal class Constraint
+    internal interface IQueryPiece
     {
-        #region Constructors and Destructors
-
-        public Constraint(ExpressionType type, object value)
-        {
-            ExpressionName = BinaryOperatorMap.Get(type);
-            Type = type;
-            Value = value;
-        }
-
-        public Constraint(string expressionName, object value)
-        {
-            ExpressionName = expressionName;
-            Value = value;
-        }
-
-        #endregion
-
         #region Public Properties
 
-        public string ExpressionName { get; set; }
-        public ExpressionType Type { get; set; }
-        public object Value { get; set; }
+        string Key { get; }
+        object Value { get; }
 
         #endregion
     }

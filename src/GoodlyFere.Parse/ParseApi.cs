@@ -37,7 +37,6 @@ using System.Net;
 using System.Reflection;
 using GoodlyFere.Parse.Attributes;
 using GoodlyFere.Parse.Interfaces;
-using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Contrib;
 
