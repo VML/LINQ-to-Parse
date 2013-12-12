@@ -100,7 +100,7 @@ namespace GoodlyFere.Parse.Linq.Transformation.ExpressionVisitors
                     Expression.Constant(parseType));
 
                 _additionalBinaries = Expression.AndAlso(parseTypeBinary, classNameBinary);
-                _propertyName = parentMemExpr.Member.Name;
+                _propertyName = ClassUtils.GetDataMemberPropertyName(parentMemExpr.Member);
             }
 
             return base.VisitMemberExpression(expression);

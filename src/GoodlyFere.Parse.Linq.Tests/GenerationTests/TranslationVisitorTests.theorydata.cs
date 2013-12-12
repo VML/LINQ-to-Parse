@@ -126,7 +126,7 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                 (from to in ParseQueryFactory.Queryable<TestObject>()
                                  where to.Test2Pointer.ObjectId == "dkdfa923"
                                  select to),
-                                "where={\"test2Pointer\":{\"__type\":\"Pointer\",\"className\":\"Test2Object\",\"objectId\":\"dkdfa923\"}}"
+                                "where={\"test2\":{\"__type\":\"Pointer\",\"className\":\"Test2Object\",\"objectId\":\"dkdfa923\"}}"
                             },
                     };
             }

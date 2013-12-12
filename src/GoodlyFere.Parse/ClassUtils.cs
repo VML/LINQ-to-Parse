@@ -49,7 +49,7 @@ namespace GoodlyFere.Parse
             CustomAttributeData attr =
                 type.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
 
-            return attr != null ? attr.ConstructorArguments[0].ToString() : type.Name;
+            return attr != null ? (string)attr.ConstructorArguments[0].Value : type.Name;
         }
 
         public static string GetDataMemberPropertyName(MemberInfo member)
