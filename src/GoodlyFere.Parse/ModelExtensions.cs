@@ -45,6 +45,11 @@ namespace GoodlyFere.Parse
             return ParseContext.API.Create(model);
         }
 
+        public static bool Delete<T>(this T model) where T : BaseModel, new()
+        {
+            return ParseContext.API.Delete(model);
+        }
+
         public static T Update<T>(this T model) where T : BaseModel, new()
         {
             return ParseContext.API.Update(model);

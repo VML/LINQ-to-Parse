@@ -63,7 +63,8 @@ namespace GoodlyFere.Parse
 
         #region Public Methods
 
-        public static void CheckForParseError<T>(IRestResponse<T> response, params HttpStatusCode[] acceptableStatusCodes)
+        public static void CheckForParseError<T>(
+            IRestResponse<T> response, params HttpStatusCode[] acceptableStatusCodes)
         {
             if (response.StatusCode == HttpStatusCode.OK
                 || acceptableStatusCodes.Contains(response.StatusCode))
@@ -94,24 +95,35 @@ namespace GoodlyFere.Parse
             throw response.ErrorException;
         }
 
-        public T Create<T>(T modelToSave) where T : BaseModel, new()
+        public T Create<T>(T modelToCreate) where T : BaseModel, new()
         {
             string uri = GetQueryRequestUri<T>();
-            uri += "/" + modelToSave.ObjectId;
+            uri += "/" + modelToCreate.ObjectId;
             RestRequest request = GetDefaultRequest(uri);
             request.Method = Method.POST;
-            request.AddBody(modelToSave);
+            request.AddBody(modelToCreate);
 
-            var response = ExecuteRequest<T>(request);
+            var response = ExecuteRequest<T>(request, HttpStatusCode.Created);
             Parameter locationHeader = response.Headers.FirstOrDefault(h => h.Name == "Location");
 
             if (locationHeader != null)
             {
                 string id = locationHeader.Value.ToString().Split('/').Last();
-                modelToSave.ObjectId = id;
+                modelToCreate.ObjectId = id;
             }
 
-            return modelToSave;
+            return modelToCreate;
+        }
+
+        public bool Delete<T>(T modelToDelete) where T : BaseModel, new()
+        {
+            string uri = GetQueryRequestUri<T>();
+            uri += "/" + modelToDelete.ObjectId;
+            RestRequest request = GetDefaultRequest(uri);
+            request.Method = Method.DELETE;
+
+            ExecuteRequest<T>(request);
+            return true;
         }
 
         public IList<T> Query<T>(string queryString)
@@ -137,7 +149,7 @@ namespace GoodlyFere.Parse
             request.Method = Method.PUT;
             request.AddBody(modelToSave);
 
-            ExecuteRequest<T>(request, HttpStatusCode.Created);
+            ExecuteRequest<T>(request);
             // response only contains updatedAt field, so we just return the same updated object
             return modelToSave;
         }
@@ -146,7 +158,8 @@ namespace GoodlyFere.Parse
 
         #region Methods
 
-        internal IRestResponse<T> ExecuteRequest<T>(IRestRequest request, params HttpStatusCode[] acceptableStatusCodes) where T : new()
+        internal IRestResponse<T> ExecuteRequest<T>(IRestRequest request, params HttpStatusCode[] acceptableStatusCodes)
+            where T : new()
         {
             RestClient client = new RestClient(_settingsProvider.ApiUrl);
             client.AddHandler("application/json", new ParseDeserializer());
