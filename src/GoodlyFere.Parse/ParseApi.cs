@@ -63,9 +63,10 @@ namespace GoodlyFere.Parse
 
         #region Public Methods
 
-        public static void CheckForParseError<T>(IRestResponse<T> response)
+        public static void CheckForParseError<T>(IRestResponse<T> response, params HttpStatusCode[] acceptableStatusCodes)
         {
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK
+                || acceptableStatusCodes.Contains(response.StatusCode))
             {
                 return;
             }
@@ -93,6 +94,26 @@ namespace GoodlyFere.Parse
             throw response.ErrorException;
         }
 
+        public T Create<T>(T modelToSave) where T : BaseModel, new()
+        {
+            string uri = GetQueryRequestUri<T>();
+            uri += "/" + modelToSave.ObjectId;
+            RestRequest request = GetDefaultRequest(uri);
+            request.Method = Method.POST;
+            request.AddBody(modelToSave);
+
+            var response = ExecuteRequest<T>(request);
+            Parameter locationHeader = response.Headers.FirstOrDefault(h => h.Name == "Location");
+
+            if (locationHeader != null)
+            {
+                string id = locationHeader.Value.ToString().Split('/').Last();
+                modelToSave.ObjectId = id;
+            }
+
+            return modelToSave;
+        }
+
         public IList<T> Query<T>(string queryString)
         {
             string uri = GetQueryRequestUri<T>();
@@ -116,7 +137,7 @@ namespace GoodlyFere.Parse
             request.Method = Method.PUT;
             request.AddBody(modelToSave);
 
-            ExecuteRequest<T>(request);
+            ExecuteRequest<T>(request, HttpStatusCode.Created);
             // response only contains updatedAt field, so we just return the same updated object
             return modelToSave;
         }
@@ -125,7 +146,7 @@ namespace GoodlyFere.Parse
 
         #region Methods
 
-        internal IRestResponse<T> ExecuteRequest<T>(IRestRequest request) where T : new()
+        internal IRestResponse<T> ExecuteRequest<T>(IRestRequest request, params HttpStatusCode[] acceptableStatusCodes) where T : new()
         {
             RestClient client = new RestClient(_settingsProvider.ApiUrl);
             client.AddHandler("application/json", new ParseDeserializer());
@@ -133,7 +154,7 @@ namespace GoodlyFere.Parse
 
             IRestResponse<T> response = client.Execute<T>(request);
             CheckForResponseError(response);
-            CheckForParseError(response);
+            CheckForParseError(response, acceptableStatusCodes);
 
             return response;
         }

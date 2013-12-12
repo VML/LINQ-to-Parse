@@ -40,6 +40,11 @@ namespace GoodlyFere.Parse
     {
         #region Public Methods
 
+        public static T Create<T>(this T model) where T : BaseModel, new()
+        {
+            return ParseContext.API.Create(model);
+        }
+
         public static T Update<T>(this T model) where T : BaseModel, new()
         {
             return ParseContext.API.Update(model);
