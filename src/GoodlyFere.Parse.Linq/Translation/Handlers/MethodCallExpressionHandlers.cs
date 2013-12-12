@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="MethodCallExpressionHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,21 +30,38 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.Handlers
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal static class MethodCallExpressionHandlers
     {
-        #region Constructors and Destructors
+        #region Methods
 
-        public ParseUserPointer()
-            : base("_User")
+        internal static void HandleStringMethods(QueryRoot query, MethodCallExpression expression)
         {
+            string propertyName = MemberNameFinder.Find(expression.Object);
+            ConstraintSet set = new ConstraintSet(propertyName);
+
+            switch (expression.Method.Name)
+            {
+                case "Contains":
+                    IList<BasicQueryPiece> operands = StringMethodHandlers.HandleContains(query, expression);
+                    foreach (var op in operands)
+                    {
+                        set.Operators.Add(op);
+                    }
+                    query.AddConstraint(set);
+                    break;
+                default:
+                    throw new Exception(string.Format("Method call not handled! {0}", expression.Method.Name));
+            }
         }
 
         #endregion

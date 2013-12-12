@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="BasicQueryPiece.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,21 +31,34 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery.JsonConverters;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.ParseQuery
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    [JsonConverter(typeof(QueryPieceJsonConverter))]
+    internal class BasicQueryPiece : IQueryPiece
     {
         #region Constructors and Destructors
 
-        public ParseUserPointer()
-            : base("_User")
+        public BasicQueryPiece()
         {
         }
+
+        public BasicQueryPiece(string key, object value)
+        {
+            Key = key;
+            Value = value;
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        public string Key { get; set; }
+        public object Value { get; set; }
 
         #endregion
     }

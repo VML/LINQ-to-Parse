@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="ResultOperatorHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,21 +30,30 @@
 #region Usings
 
 using System;
+using System.Collections;
 using System.Linq;
-using System.Runtime.Serialization;
+using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.Handlers
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal class ResultOperatorHandlers
     {
-        #region Constructors and Destructors
+        #region Public Methods
 
-        public ParseUserPointer()
-            : base("_User")
+        public static ConstraintSet HandleIEnumerableMethods(ResultOperatorBase resultOperator, IEnumerable values)
         {
+            ContainsResultOperator containsOp = (ContainsResultOperator)resultOperator;
+            string propName = MemberNameFinder.Find(containsOp.Item);
+            
+            ConstraintSet inSet = new ConstraintSet(propName);
+            inSet.Operators.Add(new BasicQueryPiece("$in", values));
+
+            return inSet;
         }
 
         #endregion

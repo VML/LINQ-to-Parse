@@ -69,6 +69,9 @@ namespace GoodlyFere.Parse.Linq.Tests.Support
         [DataMember(Name = "objectId")]
         public string ObjectId { get; set; }
 
+        [DataMember(Name = "test2")]
+        public ParsePointer<Test2Object> Test2Pointer { get; set; }
+
         #endregion
 
         #region Public Methods

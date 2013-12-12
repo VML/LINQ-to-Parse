@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="MemberNameFinder.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,20 +31,35 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Linq.Expressions;
+using Remotion.Linq.Parsing;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.ExpressionVisitors
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal class MemberNameFinder : ExpressionTreeVisitor
     {
-        #region Constructors and Destructors
+        #region Properties
 
-        public ParseUserPointer()
-            : base("_User")
+        protected string MemberName { get; private set; }
+
+        #endregion
+
+        #region Methods
+
+        internal static string Find(Expression expression)
         {
+            var visitor = new MemberNameFinder();
+            visitor.VisitExpression(expression);
+
+            return visitor.MemberName;
+        }
+
+        protected override Expression VisitMemberExpression(MemberExpression expression)
+        {
+            MemberName = ClassUtils.GetDataMemberPropertyName(expression.Member);
+            return expression;
         }
 
         #endregion

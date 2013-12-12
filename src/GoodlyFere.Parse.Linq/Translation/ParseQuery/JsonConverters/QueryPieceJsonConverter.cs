@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="QueryPieceJsonConverter.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,64 +30,62 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Interfaces;
-using GoodlyFere.Parse.Linq.Transformation;
-using GoodlyFere.Parse.Linq.Translation;
-using Remotion.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Translation.ParseQuery.JsonConverters
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    internal class QueryPieceJsonConverter : JsonConverter
     {
         #region Constants and Fields
 
-        private IParseApiSettingsProvider _settingsProvider;
+        private static readonly CamelCasePropertyNamesContractResolver PropNameResolver;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        static QueryPieceJsonConverter()
         {
-            _settingsProvider = settingsProvider;
+            PropNameResolver = new CamelCasePropertyNamesContractResolver();
         }
 
         #endregion
 
         #region Public Methods
 
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        public override bool CanConvert(Type objectType)
         {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            return query.ToList();
+            return typeof(IQueryPiece).IsAssignableFrom(objectType);
         }
 
-        public T ExecuteScalar<T>(QueryModel queryModel)
+        public override object ReadJson(
+            JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
 
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            queryString += "&limit=1";
+            IQueryPiece qp = (IQueryPiece)value;
 
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            if (returnDefaultWhenEmpty)
+            bool endObject = false;
+            if (writer.WriteState == WriteState.Array)
             {
-                return query.FirstOrDefault();
+                endObject = true;
+                writer.WriteStartObject();
             }
 
-            return query.First();
+            writer.WritePropertyName(PropNameResolver.GetResolvedPropertyName(qp.Key));
+            serializer.Serialize(writer, qp.Value);
+
+            if (endObject)
+            {
+                writer.WriteEndObject();
+            }
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="IQueryPiece.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,21 +31,17 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.ParseQuery
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal interface IQueryPiece
     {
-        #region Constructors and Destructors
+        #region Public Properties
 
-        public ParseUserPointer()
-            : base("_User")
-        {
-        }
+        string Key { get; }
+        object Value { get; }
 
         #endregion
     }

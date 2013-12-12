@@ -31,9 +31,9 @@
 
 using System;
 using System.Linq;
-using GoodlyFere.Parse.Linq.Generation;
-using GoodlyFere.Parse.Linq.Generation.Maps;
 using GoodlyFere.Parse.Linq.Tests.Support;
+using GoodlyFere.Parse.Linq.Transformation;
+using GoodlyFere.Parse.Linq.Translation;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
 using Xunit;
@@ -70,6 +70,7 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
         private static void DoWhereClauseTests(IQueryable<TestObject> clause, string expectedTranslation)
         {
             QueryModel queryModel = QueryParser.CreateDefault().GetParsedQuery(clause.Expression);
+            queryModel = TransformationVisitor.Transform(queryModel);
             string translation = TranslationVisitor.Translate(queryModel);
             Assert.Equal(expectedTranslation, translation);
         }

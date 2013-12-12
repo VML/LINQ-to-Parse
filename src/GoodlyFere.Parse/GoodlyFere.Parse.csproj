@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Attributes\ParseClassNameAttribute.cs" />
     <Compile Include="BaseModel.cs" />
+    <Compile Include="ClassUtils.cs" />
     <Compile Include="DefaultImplementations\AppSettingsParseApiSettingsProvider.cs" />
     <Compile Include="Interfaces\IParseApiSettingsProvider.cs" />
     <Compile Include="LogExtensions.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="ParseDeserializer.cs" />
     <Compile Include="ParseGeoPoint.cs" />
     <Compile Include="ParseObject.cs" />
+    <Compile Include="ParsePointer.cs" />
     <Compile Include="ParseQueryResults.cs" />
     <Compile Include="ParseSerializer.cs" />
     <Compile Include="ParseUser.cs" />

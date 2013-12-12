@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="ConstantValueFinder.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,20 +31,43 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Linq.Expressions;
+using Remotion.Linq.Parsing;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.ExpressionVisitors
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal class ConstantValueFinder : ExpressionTreeVisitor
     {
         #region Constructors and Destructors
 
-        public ParseUserPointer()
-            : base("_User")
+        protected ConstantValueFinder()
         {
+        }
+
+        #endregion
+
+        #region Properties
+
+        protected object Value { get; private set; }
+
+        #endregion
+
+        #region Methods
+
+        internal static object Find(Expression expression)
+        {
+            var visitor = new ConstantValueFinder();
+            visitor.VisitExpression(expression);
+
+            return visitor.Value;
+        }
+
+        protected override Expression VisitConstantExpression(ConstantExpression expression)
+        {
+            Value = expression.Value;
+            return expression;
         }
 
         #endregion

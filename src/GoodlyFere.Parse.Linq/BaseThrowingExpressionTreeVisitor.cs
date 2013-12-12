@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="BaseThrowingExpressionTreeVisitor.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,20 +31,27 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Linq.Expressions;
+using Remotion.Linq.Clauses.ExpressionTreeVisitors;
+using Remotion.Linq.Parsing;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal abstract class BaseThrowingExpressionTreeVisitor : ThrowingExpressionTreeVisitor
     {
-        #region Constructors and Destructors
+        #region Methods
 
-        public ParseUserPointer()
-            : base("_User")
+        protected override Exception CreateUnhandledItemException<T>(T unhandledItem, string visitMethod)
         {
+            var itemAsExpression = unhandledItem as Expression;
+            string formatted = itemAsExpression == null
+                                   ? unhandledItem.ToString()
+                                   : FormattingExpressionTreeVisitor.Format(itemAsExpression);
+
+            this.Log().Error(string.Format("Unhandled expression: {0}", formatted));
+            return new Exception("I can't handle it! Expression type: " + typeof(T).Name);
         }
 
         #endregion

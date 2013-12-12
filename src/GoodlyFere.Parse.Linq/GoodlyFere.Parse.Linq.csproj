@@ -55,34 +55,37 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Generation\Handlers\ResultOperatorHandlers.cs" />
-    <Compile Include="Generation\Maps\ResultOperatorMap.cs" />
-    <Compile Include="Generation\ParseQuery\BasicQueryPiece.cs" />
-    <Compile Include="Generation\ParseQuery\JsonConverters\ConstraintSetJsonConverter.cs" />
-    <Compile Include="Generation\ParseQuery\JsonConverters\QueryRootJsonConverter.cs" />
-    <Compile Include="Generation\ParseQuery\EqualsConstraint.cs" />
-    <Compile Include="Generation\ParseQuery\IQueryPiece.cs" />
-    <Compile Include="Generation\ParseQuery\OrConstraint.cs" />
-    <Compile Include="Generation\ParseQuery\JsonConverters\QueryPieceJsonConverter.cs" />
-    <Compile Include="Generation\ExpressionVisitors\BaseThrowingExpressionTreeVisitor.cs" />
-    <Compile Include="Generation\ExpressionVisitors\ConstantValueFinder.cs" />
-    <Compile Include="Generation\ExpressionVisitors\MemberNameFinder.cs" />
-    <Compile Include="Generation\Handlers\BinaryExpressionHandlers.cs" />
-    <Compile Include="Generation\Handlers\StringMethodHandlers.cs" />
-    <Compile Include="Generation\Handlers\MethodCallExpressionHandlers.cs" />
-    <Compile Include="Generation\Maps\BinaryExpressionMap.cs" />
-    <Compile Include="Generation\Maps\BinaryOperatorMap.cs" />
-    <Compile Include="Generation\ParseQuery\ConstraintSet.cs" />
-    <Compile Include="Generation\Maps\MethodCallExpressionMap.cs" />
-    <Compile Include="Generation\ParseQuery\QueryRoot.cs" />
-    <Compile Include="Generation\SubQueryTranslationVisitor.cs" />
-    <Compile Include="Generation\TranslationVisitor.cs" />
-    <Compile Include="Generation\ExpressionVisitors\RootExpressionVisitor.cs" />
+    <Compile Include="CustomExpressions\ParsePointerExpression.cs" />
+    <Compile Include="Translation\Handlers\ResultOperatorHandlers.cs" />
+    <Compile Include="Translation\Maps\ResultOperatorMap.cs" />
+    <Compile Include="Translation\ParseQuery\BasicQueryPiece.cs" />
+    <Compile Include="Translation\ParseQuery\JsonConverters\ConstraintSetJsonConverter.cs" />
+    <Compile Include="Translation\ParseQuery\JsonConverters\QueryRootJsonConverter.cs" />
+    <Compile Include="Translation\ParseQuery\EqualsConstraint.cs" />
+    <Compile Include="Translation\ParseQuery\IQueryPiece.cs" />
+    <Compile Include="Translation\ParseQuery\OrConstraint.cs" />
+    <Compile Include="Translation\ParseQuery\JsonConverters\QueryPieceJsonConverter.cs" />
+    <Compile Include="BaseThrowingExpressionTreeVisitor.cs" />
+    <Compile Include="Translation\ExpressionVisitors\ConstantValueFinder.cs" />
+    <Compile Include="Translation\ExpressionVisitors\MemberNameFinder.cs" />
+    <Compile Include="Translation\Handlers\BinaryExpressionHandlers.cs" />
+    <Compile Include="Translation\Handlers\StringMethodHandlers.cs" />
+    <Compile Include="Translation\Handlers\MethodCallExpressionHandlers.cs" />
+    <Compile Include="Translation\Maps\BinaryExpressionMap.cs" />
+    <Compile Include="Translation\Maps\BinaryOperatorMap.cs" />
+    <Compile Include="Translation\ParseQuery\ConstraintSet.cs" />
+    <Compile Include="Translation\Maps\MethodCallExpressionMap.cs" />
+    <Compile Include="Translation\ParseQuery\QueryRoot.cs" />
+    <Compile Include="Translation\SubQueryTranslationVisitor.cs" />
+    <Compile Include="Translation\TranslationVisitor.cs" />
+    <Compile Include="Translation\ExpressionVisitors\RootExpressionVisitor.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="ParseQueryable.cs" />
     <Compile Include="ParseQueryExecutor.cs" />
     <Compile Include="ParseQueryFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transformation\ExpressionVisitors\RootExpressionVisitor.cs" />
+    <Compile Include="Transformation\TransformationVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GoodlyFere.Parse.Linq.nuspec" />

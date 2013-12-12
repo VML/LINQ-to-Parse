@@ -121,6 +121,13 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                  select to),
                                 "where={\"age\":{\"$in\":[1,2,92]}}"
                             },
+                        new object[]
+                            {
+                                (from to in ParseQueryFactory.Queryable<TestObject>()
+                                 where to.Test2Pointer.ObjectId == "dkdfa923"
+                                 select to),
+                                "where={\"test2Pointer\":{\"__type\":\"Pointer\",\"className\":\"Test2Object\",\"objectId\":\"dkdfa923\"}}"
+                            },
                     };
             }
         }

@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="ParsePointer.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -38,14 +38,31 @@ using System.Runtime.Serialization;
 namespace GoodlyFere.Parse
 {
     [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    public class ParsePointer<T> : BaseModel
     {
         #region Constructors and Destructors
 
-        public ParseUserPointer()
-            : base("_User")
+        public ParsePointer()
+            : this(ClassUtils.GetParseClassName<T>())
         {
+            ParseType = "Pointer";
         }
+
+        public ParsePointer(string className)
+        {
+            ClassName = className;
+            ParseType = "Pointer";
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        [DataMember(Name = "className")]
+        public string ClassName { get; set; }
+
+        [DataMember(Name = "__type")]
+        public string ParseType { get; set; }
 
         #endregion
     }

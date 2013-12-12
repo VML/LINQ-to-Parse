@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="MethodCallExpressionMap.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -32,62 +32,50 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Interfaces;
-using GoodlyFere.Parse.Linq.Transformation;
-using GoodlyFere.Parse.Linq.Translation;
-using Remotion.Linq;
+using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Translation.Handlers;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Translation.Maps
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    internal delegate void MethodCallFactoryMethod(
+        QueryRoot query, MethodCallExpression expression);
+
+    internal class MethodCallExpressionMap : Dictionary<Type, MethodCallFactoryMethod>
     {
         #region Constants and Fields
 
-        private IParseApiSettingsProvider _settingsProvider;
+        private static readonly MethodCallExpressionMap _instance;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        static MethodCallExpressionMap()
         {
-            _settingsProvider = settingsProvider;
+            _instance = new MethodCallExpressionMap();
+        }
+
+        protected MethodCallExpressionMap()
+        {
+            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
+            //Add(typeof(String), MethodCallExpressionHandlers.String);
         }
 
         #endregion
 
         #region Public Methods
 
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        public static MethodCallFactoryMethod Get(Type type)
         {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            return query.ToList();
+            return Has(type) ? _instance[type] : null;
         }
 
-        public T ExecuteScalar<T>(QueryModel queryModel)
+        public static bool Has(Type type)
         {
-            throw new NotImplementedException();
-        }
-
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
-        {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            queryString += "&limit=1";
-
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            if (returnDefaultWhenEmpty)
-            {
-                return query.FirstOrDefault();
-            }
-
-            return query.First();
+            return _instance.ContainsKey(type);
         }
 
         #endregion

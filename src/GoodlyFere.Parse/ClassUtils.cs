@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="ClassUtils.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,20 +31,33 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
+using GoodlyFere.Parse.Attributes;
 
 #endregion
 
 namespace GoodlyFere.Parse
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    public static class ClassUtils
     {
-        #region Constructors and Destructors
+        #region Public Methods
 
-        public ParseUserPointer()
-            : base("_User")
+        public static string GetParseClassName<T>()
         {
+            Type type = typeof(T);
+            CustomAttributeData attr =
+                type.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
+
+            return attr != null ? attr.ConstructorArguments[0].ToString() : type.Name;
+        }
+
+        public static string GetDataMemberPropertyName(MemberInfo member)
+        {
+            CustomAttributeData attr =
+                member.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(DataMemberAttribute));
+
+            return attr != null ? (string)attr.NamedArguments.First(na => na.MemberName == "Name").TypedValue.Value : member.Name;
         }
 
         #endregion

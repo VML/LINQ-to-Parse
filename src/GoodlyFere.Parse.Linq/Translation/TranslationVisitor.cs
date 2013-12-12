@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="TranslationVisitor.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,65 +29,60 @@
 
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Interfaces;
-using GoodlyFere.Parse.Linq.Transformation;
-using GoodlyFere.Parse.Linq.Translation;
+using System;
+using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Remotion.Linq;
+using Remotion.Linq.Clauses;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Translation
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    public class TranslationVisitor : QueryModelVisitorBase
     {
-        #region Constants and Fields
+        #region Constructors and Destructors
 
-        private IParseApiSettingsProvider _settingsProvider;
+        protected TranslationVisitor()
+        {
+            Parameters = new Dictionary<string, string>();
+        }
 
         #endregion
 
-        #region Constructors and Destructors
+        #region Properties
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
-        {
-            _settingsProvider = settingsProvider;
-        }
+        protected Dictionary<string, string> Parameters { get; private set; }
 
         #endregion
 
         #region Public Methods
 
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        public static string Translate(QueryModel model)
         {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            IList<T> query = ParseContext.API.Query<T>(queryString);
+            var visitor = new TranslationVisitor();
+            visitor.VisitQueryModel(model);
 
-            return query.ToList();
+            return string.Join(
+                "&",
+                visitor.Parameters
+                       .Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
         }
 
-        public T ExecuteScalar<T>(QueryModel queryModel)
+        public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            throw new NotImplementedException();
-        }
+            var query = RootExpressionVisitor.Translate(whereClause.Predicate);
+            var settings = new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+            
+            Parameters.Add("where", JsonConvert.SerializeObject(query, settings));
 
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
-        {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            queryString += "&limit=1";
-
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            if (returnDefaultWhenEmpty)
-            {
-                return query.FirstOrDefault();
-            }
-
-            return query.First();
+            base.VisitWhereClause(whereClause, queryModel, index);
         }
 
         #endregion

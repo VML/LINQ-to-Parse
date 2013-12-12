@@ -34,8 +34,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System;
 using System.Net;
-using System.Reflection;
-using GoodlyFere.Parse.Attributes;
 using GoodlyFere.Parse.Interfaces;
 using RestSharp;
 using RestSharp.Contrib;
@@ -199,16 +197,8 @@ namespace GoodlyFere.Parse
 
         private string GetQueryRequestUri<T>()
         {
-            Type type = typeof(T);
-            CustomAttributeData attr =
-                type.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
+            string name = ClassUtils.GetParseClassName<T>();
 
-            if (attr == null)
-            {
-                return "classes/" + type.Name;
-            }
-
-            string name = (string)attr.ConstructorArguments[0].Value;
             if (name.Equals("users"))
             {
                 return name;

@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryExecutor.cs">
+// <copyright file="BinaryOperatorMap.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -32,62 +32,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodlyFere.Parse.Interfaces;
-using GoodlyFere.Parse.Linq.Transformation;
-using GoodlyFere.Parse.Linq.Translation;
-using Remotion.Linq;
+using System.Linq.Expressions;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Translation.Maps
 {
-    public class ParseQueryExecutor : IQueryExecutor
+    internal class BinaryOperatorMap : Dictionary<ExpressionType, string>
     {
         #region Constants and Fields
 
-        private IParseApiSettingsProvider _settingsProvider;
+        private static readonly BinaryOperatorMap Map;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        static BinaryOperatorMap()
         {
-            _settingsProvider = settingsProvider;
+            Map = new BinaryOperatorMap();
+        }
+
+        public BinaryOperatorMap()
+        {
+            Add(ExpressionType.NotEqual, "$ne");
+            Add(ExpressionType.GreaterThan, "$gt");
+            Add(ExpressionType.GreaterThanOrEqual, "$gte");
+            Add(ExpressionType.LessThan, "$lt");
+            Add(ExpressionType.LessThanOrEqual, "$lte");
         }
 
         #endregion
 
-        #region Public Methods
+        #region Methods
 
-        public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
+        internal static string Get(ExpressionType type)
         {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            return query.ToList();
-        }
-
-        public T ExecuteScalar<T>(QueryModel queryModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
-        {
-            queryModel = TransformationVisitor.Transform(queryModel);
-            string queryString = TranslationVisitor.Translate(queryModel);
-            queryString += "&limit=1";
-
-            IList<T> query = ParseContext.API.Query<T>(queryString);
-
-            if (returnDefaultWhenEmpty)
-            {
-                return query.FirstOrDefault();
-            }
-
-            return query.First();
+            return Map.ContainsKey(type) ? Map[type] : null;
         }
 
         #endregion

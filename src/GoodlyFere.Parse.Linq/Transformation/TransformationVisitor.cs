@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="TransformationVisitor.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,20 +31,30 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using GoodlyFere.Parse.Linq.Transformation.ExpressionVisitors;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Transformation
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    public class TransformationVisitor : QueryModelVisitorBase
     {
-        #region Constructors and Destructors
+        #region Public Methods
 
-        public ParseUserPointer()
-            : base("_User")
+        public static QueryModel Transform(QueryModel model)
         {
+            var visitor = new TransformationVisitor();
+            visitor.VisitQueryModel(model);
+
+            return model;
+        }
+
+        public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
+        {
+            whereClause.Predicate = RootExpressionVisitor.Transform(whereClause.Predicate);
+            base.VisitWhereClause(whereClause, queryModel, index);
         }
 
         #endregion

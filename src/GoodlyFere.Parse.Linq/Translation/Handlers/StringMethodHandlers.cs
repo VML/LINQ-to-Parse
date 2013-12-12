@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseUserPointer.cs">
+// <copyright file="StringMethodHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,21 +30,29 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Linq.Expressions;
+using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.Handlers
 {
-    [DataContract]
-    public class ParseUserPointer : ParsePointer<ParseUser>
+    internal static class StringMethodHandlers
     {
-        #region Constructors and Destructors
+        #region Methods
 
-        public ParseUserPointer()
-            : base("_User")
+        internal static IList<BasicQueryPiece> HandleContains(QueryRoot query, MethodCallExpression expression)
         {
+            object value = ConstantValueFinder.Find(expression);
+            List<BasicQueryPiece> pieces = new List<BasicQueryPiece>
+                {
+                    new BasicQueryPiece("$regex", value),
+                    new BasicQueryPiece("$options", "mi")
+                };
+            return pieces;
         }
 
         #endregion
