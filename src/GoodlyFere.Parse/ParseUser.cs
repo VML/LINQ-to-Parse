@@ -32,6 +32,7 @@
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using GoodlyFere.Parse.Attributes;
 using RestSharp;
 
 #endregion
@@ -39,6 +40,7 @@ using RestSharp;
 namespace GoodlyFere.Parse
 {
     [DataContract]
+    [ParseClassName("_User")]
     public class ParseUser : ParseObject
     {
         #region Public Properties
