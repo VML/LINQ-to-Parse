@@ -80,6 +80,7 @@
     <Compile Include="ModelExtensions.cs" />
     <Compile Include="ParseApi.cs" />
     <Compile Include="ParseContext.cs" />
+    <Compile Include="ParseCountResults.cs" />
     <Compile Include="ParseDeserializer.cs" />
     <Compile Include="ParseGeoPoint.cs" />
     <Compile Include="ParseObject.cs" />

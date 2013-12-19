@@ -93,6 +93,17 @@ namespace GoodlyFere.Parse
             throw response.ErrorException;
         }
 
+        public long Count(string queryString, Type objectType)
+        {
+            string uri = GetQueryRequestUri(objectType);
+            var request = GetDefaultRequest(uri);
+            SetParameters(queryString, request);
+
+            IRestResponse<ParseCountResults> response = ExecuteRequest<ParseCountResults>(request);
+
+            return response.Data.Count;
+        }
+
         public T Create<T>(T modelToCreate) where T : BaseModel, new()
         {
             string uri = GetQueryRequestUri<T>();
@@ -195,9 +206,9 @@ namespace GoodlyFere.Parse
             return request;
         }
 
-        private string GetQueryRequestUri<T>()
+        private string GetQueryRequestUri(Type objectType)
         {
-            string name = ClassUtils.GetParseClassName<T>();
+            string name = ClassUtils.GetParseClassName(objectType);
 
             if (name.Equals("users"))
             {
@@ -205,6 +216,11 @@ namespace GoodlyFere.Parse
             }
 
             return "classes/" + name;
+        }
+
+        private string GetQueryRequestUri<T>()
+        {
+            return GetQueryRequestUri(typeof(T));
         }
 
         private IList<T> GetResults<T>(IRestResponse<ParseQueryResults<T>> response)

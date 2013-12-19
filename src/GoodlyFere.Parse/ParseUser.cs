@@ -31,6 +31,7 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization;
 using GoodlyFere.Parse.Attributes;
 using RestSharp;
@@ -112,17 +113,18 @@ namespace GoodlyFere.Parse
             return ExecuteUserRequest(request);
         }
 
-        public static ParseUser SignUp(ParseUser newUser)
+        public static ParseUser SignUp(ParseUser newUser, string password)
         {
             if (newUser == null)
             {
                 throw new ArgumentNullException("newUser");
             }
 
+            newUser["password"] = password;
             RestRequest request = new RestRequest("users") { Method = Method.POST, RequestFormat = DataFormat.Json };
             request.AddBody(newUser);
 
-            IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request);
+            IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request, HttpStatusCode.Created);
             return response.Data;
         }
 

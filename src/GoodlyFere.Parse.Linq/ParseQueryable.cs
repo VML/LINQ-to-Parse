@@ -52,7 +52,7 @@ namespace GoodlyFere.Parse.Linq
             : base(provider, expression)
         {
         }
-
+    
         #endregion
     }
 }

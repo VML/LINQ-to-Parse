@@ -30,7 +30,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Translation.Handlers;
@@ -43,22 +42,11 @@ namespace GoodlyFere.Parse.Linq.Translation.Maps
     internal delegate void BinaryExpressionFactoryMethod(
         QueryRoot query, BinaryExpression binExpr);
 
-    internal class BinaryExpressionMap : Dictionary<ExpressionType, BinaryExpressionFactoryMethod>
+    internal class BinaryExpressionMap : Map<BinaryExpressionMap, ExpressionType, BinaryExpressionFactoryMethod>
     {
-        #region Constants and Fields
-
-        private static readonly BinaryExpressionMap _instance;
-
-        #endregion
-
         #region Constructors and Destructors
 
-        static BinaryExpressionMap()
-        {
-            _instance = new BinaryExpressionMap();
-        }
-
-        protected BinaryExpressionMap()
+        public BinaryExpressionMap()
         {
             // logical operators
             Add(ExpressionType.AndAlso, BinaryExpressionHandlers.HandleLogicalAnd);
@@ -82,20 +70,6 @@ namespace GoodlyFere.Parse.Linq.Translation.Maps
             Add(
                 ExpressionType.LessThanOrEqual,
                 (qp, es) => BinaryExpressionHandlers.HandleGeneralBinary(qp, es, ExpressionType.LessThanOrEqual));
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public static BinaryExpressionFactoryMethod Get(ExpressionType type)
-        {
-            return Has(type) ? _instance[type] : null;
-        }
-
-        public static bool Has(ExpressionType type)
-        {
-            return _instance.ContainsKey(type);
         }
 
         #endregion

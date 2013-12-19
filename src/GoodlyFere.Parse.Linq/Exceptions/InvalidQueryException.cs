@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionMap.cs">
+// <copyright file="InvalidQueryException.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,25 +31,36 @@
 
 using System;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Translation.Handlers;
-using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Translation.Maps
+namespace GoodlyFere.Parse.Linq.Exceptions
 {
-    internal delegate void MethodCallFactoryMethod(
-        QueryRoot query, MethodCallExpression expression);
-
-    internal class MethodCallExpressionMap : Map<MethodCallExpressionMap, Type, MethodCallFactoryMethod>
+    public class InvalidQueryException : Exception
     {
+        #region Constants and Fields
+
+        private readonly string _message;
+
+        #endregion
+
         #region Constructors and Destructors
 
-        public MethodCallExpressionMap()
+        public InvalidQueryException(string message)
         {
-            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
+            _message = message + " ";
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        public override string Message
+        {
+            get
+            {
+                return "The client query is invalid: " + _message;
+            }
         }
 
         #endregion

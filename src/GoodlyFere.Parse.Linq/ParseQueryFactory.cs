@@ -46,13 +46,23 @@ namespace GoodlyFere.Parse.Linq
 
         public static ParseQueryable<T> Queryable<T>()
         {
-            return Queryable<T>(null);
+            return Queryable<T>((IParseApiSettingsProvider)null);
         }
 
         public static ParseQueryable<T> Queryable<T>(IParseApiSettingsProvider settingsProvider)
         {
             settingsProvider = settingsProvider ?? new AppSettingsParseApiSettingsProvider();
-            return new ParseQueryable<T>(CreateParser(), CreateExecutor(settingsProvider));
+            return Queryable<T>(CreateParser(), CreateExecutor(settingsProvider));
+        }
+
+        public static ParseQueryable<T> Queryable<T>(IQueryExecutor executor)
+        {
+            return Queryable<T>(CreateParser(), executor);
+        }
+
+        public static ParseQueryable<T> Queryable<T>(IQueryParser parser, IQueryExecutor executor)
+        {
+            return new ParseQueryable<T>(parser, executor);
         }
 
         #endregion

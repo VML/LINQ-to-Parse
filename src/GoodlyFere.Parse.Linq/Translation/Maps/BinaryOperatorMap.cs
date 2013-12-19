@@ -30,7 +30,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -38,20 +37,9 @@ using System.Linq.Expressions;
 
 namespace GoodlyFere.Parse.Linq.Translation.Maps
 {
-    internal class BinaryOperatorMap : Dictionary<ExpressionType, string>
+    internal class BinaryOperatorMap : Map<BinaryOperatorMap, ExpressionType, string>
     {
-        #region Constants and Fields
-
-        private static readonly BinaryOperatorMap Map;
-
-        #endregion
-
         #region Constructors and Destructors
-
-        static BinaryOperatorMap()
-        {
-            Map = new BinaryOperatorMap();
-        }
 
         public BinaryOperatorMap()
         {
@@ -60,15 +48,6 @@ namespace GoodlyFere.Parse.Linq.Translation.Maps
             Add(ExpressionType.GreaterThanOrEqual, "$gte");
             Add(ExpressionType.LessThan, "$lt");
             Add(ExpressionType.LessThanOrEqual, "$lte");
-        }
-
-        #endregion
-
-        #region Methods
-
-        internal static string Get(ExpressionType type)
-        {
-            return Map.ContainsKey(type) ? Map[type] : null;
         }
 
         #endregion

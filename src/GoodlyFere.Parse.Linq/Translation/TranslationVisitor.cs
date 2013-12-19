@@ -37,6 +37,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
@@ -72,6 +73,31 @@ namespace GoodlyFere.Parse.Linq.Translation
                        .Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
         }
 
+        public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
+        {
+            if (resultOperator is SkipResultOperator)
+            {
+                var skipRO = (SkipResultOperator)resultOperator;
+                Parameters.Add("skip", ConstantValueFinder.Find(skipRO.Count).ToString());
+            }
+            else if (resultOperator is TakeResultOperator)
+            {
+                var takeRO = (TakeResultOperator)resultOperator;
+                Parameters.Add("limit", ConstantValueFinder.Find(takeRO.Count).ToString());
+            }
+            else if (resultOperator is FirstResultOperator)
+            {
+                Parameters.Add("limit", "1");
+            }
+            else if (resultOperator is CountResultOperator)
+            {
+                Parameters.Add("limit", "0");
+                Parameters.Add("count", "1");
+            }
+
+            base.VisitResultOperator(resultOperator, queryModel, index);
+        }
+
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
             var query = RootExpressionVisitor.Translate(whereClause.Predicate);
@@ -79,7 +105,7 @@ namespace GoodlyFere.Parse.Linq.Translation
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 };
-            
+
             Parameters.Add("where", JsonConvert.SerializeObject(query, settings));
 
             base.VisitWhereClause(whereClause, queryModel, index);

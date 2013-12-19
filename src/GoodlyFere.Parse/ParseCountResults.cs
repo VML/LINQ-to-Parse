@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionMap.cs">
+// <copyright file="ParseCountResults.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,28 +29,18 @@
 
 #region Usings
 
-using System;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Translation.Handlers;
-using GoodlyFere.Parse.Linq.Translation.ParseQuery;
+using System;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Translation.Maps
+namespace GoodlyFere.Parse
 {
-    internal delegate void MethodCallFactoryMethod(
-        QueryRoot query, MethodCallExpression expression);
-
-    internal class MethodCallExpressionMap : Map<MethodCallExpressionMap, Type, MethodCallFactoryMethod>
+    public class ParseCountResults
     {
-        #region Constructors and Destructors
+        #region Public Properties
 
-        public MethodCallExpressionMap()
-        {
-            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
-        }
+        public long Count { get; set; }
 
         #endregion
     }

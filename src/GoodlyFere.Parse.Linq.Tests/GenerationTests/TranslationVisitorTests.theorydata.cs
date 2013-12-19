@@ -100,7 +100,9 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                         new object[]
                             {
                                 (from to in ParseQueryFactory.Queryable<TestObject>()
-                                 where to.FirstName.Contains("Ben") || to.LastName.Contains("Ramey") || to.MiddleName.Contains("Steven")
+                                 where
+                                     to.FirstName.Contains("Ben") || to.LastName.Contains("Ramey")
+                                     || to.MiddleName.Contains("Steven")
                                  select to),
                                 "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}},{\"lastName\":{\"$regex\":\"Ramey\",\"$options\":\"mi\"}},{\"middleName\":{\"$regex\":\"Steven\",\"$options\":\"mi\"}}]}"
                             },
@@ -108,9 +110,9 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                             {
                                 (from to in ParseQueryFactory.Queryable<TestObject>()
                                  where to.FirstName.Contains("Ben")
-                                 || to.LastName.Contains("Ramey")
-                                 || to.MiddleName.Contains("Steven")
-                                 || to.AnotherName.Contains("Bones")
+                                       || to.LastName.Contains("Ramey")
+                                       || to.MiddleName.Contains("Steven")
+                                       || to.AnotherName.Contains("Bones")
                                  select to),
                                 "where={\"$or\":[{\"firstName\":{\"$regex\":\"Ben\",\"$options\":\"mi\"}},{\"lastName\":{\"$regex\":\"Ramey\",\"$options\":\"mi\"}},{\"middleName\":{\"$regex\":\"Steven\",\"$options\":\"mi\"}},{\"anotherName\":{\"$regex\":\"Bones\",\"$options\":\"mi\"}}]}"
                             },
@@ -127,6 +129,31 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                  where to.Test2Pointer.ObjectId == "dkdfa923"
                                  select to),
                                 "where={\"test2\":{\"__type\":\"Pointer\",\"className\":\"Test2Object\",\"objectId\":\"dkdfa923\"}}"
+                            },
+                    };
+            }
+        }
+
+        public static IEnumerable<object[]> ResultOperators
+        {
+            get
+            {
+                return new[]
+                    {
+                        new object[]
+                            {
+                                ParseQueryFactory.Queryable<TestObject>().Skip(10),
+                                "skip=10"
+                            },
+                        new object[]
+                            {
+                                ParseQueryFactory.Queryable<TestObject>().Take(10),
+                                "limit=10"
+                            },
+                        new object[]
+                            {
+                                ParseQueryFactory.Queryable<TestObject>().Skip(10).Take(10),
+                                "skip=10&limit=10"
                             },
                     };
             }

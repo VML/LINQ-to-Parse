@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using GoodlyFere.Parse.Linq.Translation.Handlers;
 using GoodlyFere.Parse.Linq.Translation.ParseQuery;
@@ -45,38 +44,13 @@ namespace GoodlyFere.Parse.Linq.Translation.Maps
     internal delegate ConstraintSet ResultOperatorFactoryMethod(
         ResultOperatorBase resultOperator, IEnumerable values);
 
-    internal class ResultOperatorMap : Dictionary<Type, ResultOperatorFactoryMethod>
+    internal class ResultOperatorMap : Map<ResultOperatorMap, Type, ResultOperatorFactoryMethod>
     {
-        #region Constants and Fields
-
-        private static readonly ResultOperatorMap Instance;
-
-        #endregion
-
         #region Constructors and Destructors
 
-        static ResultOperatorMap()
-        {
-            Instance = new ResultOperatorMap();
-        }
-
-        protected ResultOperatorMap()
+        public ResultOperatorMap()
         {
             Add(typeof(ContainsResultOperator), ResultOperatorHandlers.HandleIEnumerableMethods);
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public static ResultOperatorFactoryMethod Get(Type type)
-        {
-            return Has(type) ? Instance[type] : null;
-        }
-
-        public static bool Has(Type type)
-        {
-            return Instance.ContainsKey(type);
         }
 
         #endregion

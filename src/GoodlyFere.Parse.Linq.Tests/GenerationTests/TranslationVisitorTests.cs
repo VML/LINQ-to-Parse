@@ -31,6 +31,7 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Tests.Support;
 using GoodlyFere.Parse.Linq.Transformation;
 using GoodlyFere.Parse.Linq.Translation;
@@ -47,31 +48,54 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
     {
         #region Public Methods
 
+        [Fact]
+        public void Count()
+        {
+            int count = ParseQueryFactory.Queryable<TestObject>().Count();
+        }
+
+        [Theory]
+        [PropertyData("ResultOperators")]
+        public void ResultOperators_TranslatesProperly(
+            IQueryable<TestObject> query, string expectedTranslation)
+        {
+            DoTranslation(query, expectedTranslation);
+        }
+
         [Theory]
         [PropertyData("CompoundComparisons")]
         public void WhereClauses_CompoundComparisons_TranslatesProperly(
-            IQueryable<TestObject> clause, string expectedTranslation)
+            IQueryable<TestObject> query, string expectedTranslation)
         {
-            DoWhereClauseTests(clause, expectedTranslation);
+            DoTranslation(query, expectedTranslation);
         }
 
         [Theory]
         [PropertyData("SimpleComparisons")]
         public void WhereClauses_SimpleComparisons_TranslatesProperly(
-            IQueryable<TestObject> clause, string expectedTranslation)
+            IQueryable<TestObject> query, string expectedTranslation)
         {
-            DoWhereClauseTests(clause, expectedTranslation);
+            DoTranslation(query, expectedTranslation);
         }
 
         #endregion
 
         #region Methods
 
-        private static void DoWhereClauseTests(IQueryable<TestObject> clause, string expectedTranslation)
+        private static void DoTranslation(IQueryable<TestObject> query, string expectedTranslation)
         {
-            QueryModel queryModel = QueryParser.CreateDefault().GetParsedQuery(clause.Expression);
+            QueryModel queryModel = QueryParser.CreateDefault().GetParsedQuery(query.Expression);
             queryModel = TransformationVisitor.Transform(queryModel);
             string translation = TranslationVisitor.Translate(queryModel);
+
+            Assert.Equal(expectedTranslation, translation);
+        }
+
+        private static void DoTranslation(QueryModel queryModel, string expectedTranslation)
+        {
+            queryModel = TransformationVisitor.Transform(queryModel);
+            string translation = TranslationVisitor.Translate(queryModel);
+
             Assert.Equal(expectedTranslation, translation);
         }
 

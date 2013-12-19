@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionMap.cs">
+// <copyright file="BoolResultMap.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,26 +30,21 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Translation.Handlers;
-using GoodlyFere.Parse.Linq.Translation.ParseQuery;
+using GoodlyFere.Parse.Linq.Execution.Handlers;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Translation.Maps
+namespace GoodlyFere.Parse.Linq.Execution.Maps
 {
-    internal delegate void MethodCallFactoryMethod(
-        QueryRoot query, MethodCallExpression expression);
-
-    internal class MethodCallExpressionMap : Map<MethodCallExpressionMap, Type, MethodCallFactoryMethod>
+    internal class BoolResultMap : Map<BoolResultMap, Type, ScalarResultHandlerMethod<bool>>
     {
         #region Constructors and Destructors
 
-        public MethodCallExpressionMap()
+        public BoolResultMap()
         {
-            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
         }
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionMap.cs">
+// <copyright file="Int64ResultMap.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,26 +30,22 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Translation.Handlers;
-using GoodlyFere.Parse.Linq.Translation.ParseQuery;
+using GoodlyFere.Parse.Linq.Execution.Handlers;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Translation.Maps
+namespace GoodlyFere.Parse.Linq.Execution.Maps
 {
-    internal delegate void MethodCallFactoryMethod(
-        QueryRoot query, MethodCallExpression expression);
-
-    internal class MethodCallExpressionMap : Map<MethodCallExpressionMap, Type, MethodCallFactoryMethod>
+    internal class Int64ResultMap : Map<Int64ResultMap, Type, ScalarResultHandlerMethod<Int64>>
     {
         #region Constructors and Destructors
 
-        public MethodCallExpressionMap()
+        public Int64ResultMap()
         {
-            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
+            Add(typeof(LongCountResultOperator), Int64ResultHandlers.HandleLongCount);
         }
 
         #endregion

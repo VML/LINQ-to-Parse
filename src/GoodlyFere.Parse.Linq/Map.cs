@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionMap.cs">
+// <copyright file="Map.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,26 +30,45 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using GoodlyFere.Parse.Linq.Translation.Handlers;
-using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq.Translation.Maps
+namespace GoodlyFere.Parse.Linq
 {
-    internal delegate void MethodCallFactoryMethod(
-        QueryRoot query, MethodCallExpression expression);
-
-    internal class MethodCallExpressionMap : Map<MethodCallExpressionMap, Type, MethodCallFactoryMethod>
+    internal class Map<TInstance, TKey, TValue> : Dictionary<TKey, TValue>
+        where TValue : class
+        where TInstance : Map<TInstance, TKey, TValue>, new()
     {
-        #region Constructors and Destructors
+        #region Constants and Fields
 
-        public MethodCallExpressionMap()
+        private static TInstance _instance;
+
+        #endregion
+
+        #region Properties
+
+        private static TInstance Instance
         {
-            Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
+            get
+            {
+                return _instance ?? (_instance = new TInstance());
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public static TValue Get(TKey type)
+        {
+            return Has(type) ? Instance[type] : null;
+        }
+
+        public static bool Has(TKey type)
+        {
+            return Instance.ContainsKey(type);
         }
 
         #endregion

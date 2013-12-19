@@ -91,6 +91,7 @@
     <Compile Include="LogExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\Test2Object.cs" />
+    <Compile Include="Support\TestExecutor.cs" />
     <Compile Include="Support\TestObject.cs" />
   </ItemGroup>
   <ItemGroup>

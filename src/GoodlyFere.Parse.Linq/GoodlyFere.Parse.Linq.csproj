@@ -74,6 +74,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomExpressions\ParsePointerExpression.cs" />
+    <Compile Include="Exceptions\InvalidQueryException.cs" />
+    <Compile Include="Execution\Handlers\BoolResultHandlers.cs" />
+    <Compile Include="Execution\Handlers\Int32ResultHandlers.cs" />
+    <Compile Include="Execution\Handlers\Int64ResultHandlers.cs" />
+    <Compile Include="Execution\Maps\BoolResultMap.cs" />
+    <Compile Include="Execution\Maps\Int32ResultMap.cs" />
+    <Compile Include="Execution\Maps\Int64ResultMap.cs" />
+    <Compile Include="Execution\Maps\ScalarResultMaps.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="Translation\Handlers\ResultOperatorHandlers.cs" />
     <Compile Include="Translation\Maps\ResultOperatorMap.cs" />
     <Compile Include="Translation\ParseQuery\BasicQueryPiece.cs" />
@@ -111,7 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GoodlyFere.Parse\GoodlyFere.Parse.csproj">
-      <Project>{a6e1aa83-8909-4eb9-86c6-485bfbacbf60}</Project>
+      <Project>{A6E1AA83-8909-4EB9-86C6-485BFBACBF60}</Project>
       <Name>GoodlyFere.Parse</Name>
     </ProjectReference>
   </ItemGroup>

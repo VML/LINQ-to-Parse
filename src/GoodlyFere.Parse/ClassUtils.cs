@@ -43,21 +43,27 @@ namespace GoodlyFere.Parse
     {
         #region Public Methods
 
-        public static string GetParseClassName<T>()
-        {
-            Type type = typeof(T);
-            CustomAttributeData attr =
-                type.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
-
-            return attr != null ? (string)attr.ConstructorArguments[0].Value : type.Name;
-        }
-
         public static string GetDataMemberPropertyName(MemberInfo member)
         {
             CustomAttributeData attr =
                 member.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(DataMemberAttribute));
 
-            return attr != null ? (string)attr.NamedArguments.First(na => na.MemberName == "Name").TypedValue.Value : member.Name;
+            return attr != null
+                       ? (string)attr.NamedArguments.First(na => na.MemberName == "Name").TypedValue.Value
+                       : member.Name;
+        }
+
+        public static string GetParseClassName<T>()
+        {
+            return GetParseClassName(typeof(T));
+        }
+
+        public static string GetParseClassName(Type objectType)
+        {
+            CustomAttributeData attr =
+                objectType.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
+
+            return attr != null ? (string)attr.ConstructorArguments[0].Value : objectType.Name;
         }
 
         #endregion
