@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodlyFere.Parse.DefaultImplementations;
 using GoodlyFere.Parse.Linq.Tests.Support;
-using RestSharp;
 using Xunit;
 using Xunit.Extensions;
 
@@ -139,7 +138,7 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         {
             var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
             var results =
-                parseApi.Query<TestObject>("skip="+ amount);
+                parseApi.Query<TestObject>("skip=" + amount);
             var expectedResults = _testObjects.Skip(amount).ToList();
 
             Assert.NotNull(results);
@@ -179,6 +178,33 @@ namespace GoodlyFere.Parse.Linq.Tests.ExecutionTests
         public void Query_WhereClauses_ExecutesQuery(string queryString, Func<TestObject, bool> filter)
         {
             TestQuerying(queryString, _testObjects, filter);
+        }
+
+        [Fact]
+        public void Update()
+        {
+            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var obj = _testObjects.First();
+            string oldName = obj.FirstName;
+            string newName = oldName + oldName;
+
+            obj.FirstName = newName;
+
+            Assert.DoesNotThrow(() => obj = parseApi.Update(obj));
+            Assert.Equal(newName, obj.FirstName);
+        }
+
+        [Fact]
+        public void Update_WithPointer()
+        {
+            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var obj = _testObjects.First();
+
+            obj.Test2Pointer = new ParsePointer<Test2Object> { ObjectId = _test2Objects.First().ObjectId };
+
+            Assert.DoesNotThrow(() => obj = parseApi.Update(obj));
+            Assert.True(obj.CreatedAt > DateTime.MinValue);
+            Assert.True(obj.UpdatedAt > DateTime.MinValue);
         }
 
         #endregion

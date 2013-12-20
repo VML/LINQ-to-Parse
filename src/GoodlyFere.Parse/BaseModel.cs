@@ -32,6 +32,7 @@
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -43,12 +44,14 @@ namespace GoodlyFere.Parse
         #region Public Properties
 
         [DataMember(Name = "createdAt")]
+        [JsonIgnore]
         public DateTime CreatedAt { get; set; }
 
         [DataMember(Name = "objectId")]
         public string ObjectId { get; set; }
 
         [DataMember(Name = "updatedAt")]
+        [JsonIgnore]
         public DateTime UpdatedAt { get; set; }
 
         #endregion

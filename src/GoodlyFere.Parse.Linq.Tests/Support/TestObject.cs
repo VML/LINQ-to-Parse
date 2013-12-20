@@ -44,7 +44,7 @@ using RestSharp;
 namespace GoodlyFere.Parse.Linq.Tests.Support
 {
     [DataContract]
-    public class TestObject
+    public class TestObject : BaseModel
     {
         #region Public Properties
 
@@ -65,10 +65,7 @@ namespace GoodlyFere.Parse.Linq.Tests.Support
 
         [DataMember(Name = "middleName")]
         public string MiddleName { get; set; }
-
-        [DataMember(Name = "objectId")]
-        public string ObjectId { get; set; }
-
+        
         [DataMember(Name = "test2")]
         public ParsePointer<Test2Object> Test2Pointer { get; set; }
 
