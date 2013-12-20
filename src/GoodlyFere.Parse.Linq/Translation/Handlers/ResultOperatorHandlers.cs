@@ -30,10 +30,9 @@
 #region Usings
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
-using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 
@@ -45,15 +44,31 @@ namespace GoodlyFere.Parse.Linq.Translation.Handlers
     {
         #region Public Methods
 
-        public static ConstraintSet HandleIEnumerableMethods(ResultOperatorBase resultOperator, IEnumerable values)
+        public static void HandleCount(
+            ResultOperatorBase resultOperator, Dictionary<string, string> parameters)
         {
-            ContainsResultOperator containsOp = (ContainsResultOperator)resultOperator;
-            string propName = MemberNameFinder.Find(containsOp.Item);
-            
-            ConstraintSet inSet = new ConstraintSet(propName);
-            inSet.Operators.Add(new BasicQueryPiece("$in", values));
+            parameters.Add("limit", "0");
+            parameters.Add("count", "1");
+        }
 
-            return inSet;
+        public static void HandleFirst(
+            ResultOperatorBase resultOperator, Dictionary<string, string> parameters)
+        {
+            parameters.Add("limit", "1");
+        }
+
+        public static void HandleSkip(
+            ResultOperatorBase resultOperator, Dictionary<string, string> parameters)
+        {
+            var skipRO = (SkipResultOperator)resultOperator;
+            parameters.Add("skip", ConstantValueFinder.Find(skipRO.Count).ToString());
+        }
+
+        public static void HandleTake(
+            ResultOperatorBase resultOperator, Dictionary<string, string> parameters)
+        {
+            var takeRO = (TakeResultOperator)resultOperator;
+            parameters.Add("limit", ConstantValueFinder.Find(takeRO.Count).ToString());
         }
 
         #endregion

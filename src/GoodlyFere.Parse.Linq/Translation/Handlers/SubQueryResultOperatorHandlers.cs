@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BaseModel.cs">
+// <copyright file="ResultOperatorHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,26 +30,33 @@
 #region Usings
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Linq.Translation.Handlers
 {
-    [DataContract]
-    public abstract class BaseModel
+    internal class SubQueryResultOperatorHandlers
     {
-        #region Public Properties
+        #region Public Methods
+        
+        public static ConstraintSet HandleIEnumerableMethods(
+            ResultOperatorBase resultOperator, IEnumerable values)
+        {
+            ContainsResultOperator containsOp = (ContainsResultOperator)resultOperator;
+            string propName = MemberNameFinder.Find(containsOp.Item);
 
-        [DataMember(Name = "createdAt")]
-        public DateTime CreatedAt { get; set; }
+            ConstraintSet inSet = new ConstraintSet(propName);
+            inSet.Operators.Add(new BasicQueryPiece("$in", values));
 
-        [DataMember(Name = "objectId")]
-        public string ObjectId { get; set; }
-
-        [DataMember(Name = "updatedAt")]
-        public DateTime UpdatedAt { get; set; }
+            return inSet;
+        }
 
         #endregion
     }

@@ -30,7 +30,7 @@
 #region Usings
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using GoodlyFere.Parse.Linq.Translation.Handlers;
 using GoodlyFere.Parse.Linq.Translation.ParseQuery;
@@ -41,8 +41,8 @@ using Remotion.Linq.Clauses.ResultOperators;
 
 namespace GoodlyFere.Parse.Linq.Translation.Maps
 {
-    internal delegate ConstraintSet ResultOperatorFactoryMethod(
-        ResultOperatorBase resultOperator, IEnumerable values);
+    internal delegate void ResultOperatorFactoryMethod(
+        ResultOperatorBase resultOperator, Dictionary<string, string> parameters);
 
     internal class ResultOperatorMap : Map<ResultOperatorMap, Type, ResultOperatorFactoryMethod>
     {
@@ -50,7 +50,10 @@ namespace GoodlyFere.Parse.Linq.Translation.Maps
 
         public ResultOperatorMap()
         {
-            Add(typeof(ContainsResultOperator), ResultOperatorHandlers.HandleIEnumerableMethods);
+            Add(typeof(SkipResultOperator), ResultOperatorHandlers.HandleSkip);
+            Add(typeof(TakeResultOperator), ResultOperatorHandlers.HandleTake);
+            Add(typeof(FirstResultOperator), ResultOperatorHandlers.HandleFirst);
+            Add(typeof(CountResultOperator), ResultOperatorHandlers.HandleCount);
         }
 
         #endregion

@@ -32,12 +32,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using GoodlyFere.Parse.Linq.Exceptions;
 using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
+using GoodlyFere.Parse.Linq.Translation.Maps;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-using Remotion.Linq.Clauses.ResultOperators;
 
 #endregion
 
@@ -73,27 +74,31 @@ namespace GoodlyFere.Parse.Linq.Translation
                        .Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
         }
 
+        public override void VisitOrderByClause(OrderByClause orderByClause, QueryModel queryModel, int index)
+        {
+            List<string> orderingProperties = new List<string>();
+            foreach (var ordering in orderByClause.Orderings)
+            {
+                string propertyName = MemberNameFinder.Find(ordering.Expression);
+                propertyName = ordering.OrderingDirection == OrderingDirection.Desc ? "-" + propertyName : propertyName;
+                orderingProperties.Add(propertyName);
+            }
+
+            Parameters.Add("order", string.Join(",", orderingProperties));
+
+            base.VisitOrderByClause(orderByClause, queryModel, index);
+        }
+
         public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
         {
-            if (resultOperator is SkipResultOperator)
+            if (!ResultOperatorMap.Has(resultOperator.GetType()))
             {
-                var skipRO = (SkipResultOperator)resultOperator;
-                Parameters.Add("skip", ConstantValueFinder.Find(skipRO.Count).ToString());
+                throw new InvalidQueryException(
+                    string.Format("{0} result operator cannot be handled.", resultOperator.GetType().Name));
             }
-            else if (resultOperator is TakeResultOperator)
-            {
-                var takeRO = (TakeResultOperator)resultOperator;
-                Parameters.Add("limit", ConstantValueFinder.Find(takeRO.Count).ToString());
-            }
-            else if (resultOperator is FirstResultOperator)
-            {
-                Parameters.Add("limit", "1");
-            }
-            else if (resultOperator is CountResultOperator)
-            {
-                Parameters.Add("limit", "0");
-                Parameters.Add("count", "1");
-            }
+
+            var handler = ResultOperatorMap.Get(resultOperator.GetType());
+            handler.Invoke(resultOperator, Parameters);
 
             base.VisitResultOperator(resultOperator, queryModel, index);
         }

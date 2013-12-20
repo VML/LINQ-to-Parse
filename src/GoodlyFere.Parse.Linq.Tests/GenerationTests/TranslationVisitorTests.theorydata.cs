@@ -155,6 +155,16 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                 ParseQueryFactory.Queryable<TestObject>().Skip(10).Take(10),
                                 "skip=10&limit=10"
                             },
+                        new object[]
+                            {
+                                ParseQueryFactory.Queryable<TestObject>().OrderBy(t => t.FirstName),
+                                "order=firstName"
+                            },
+                        new object[]
+                            {
+                                ParseQueryFactory.Queryable<TestObject>().OrderByDescending(t => t.FirstName),
+                                "order=-firstName"
+                            },
                     };
             }
         }

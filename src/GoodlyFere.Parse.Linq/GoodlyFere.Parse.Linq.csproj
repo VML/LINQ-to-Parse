@@ -84,7 +84,9 @@
     <Compile Include="Execution\Maps\ScalarResultMaps.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Translation\Handlers\ResultOperatorHandlers.cs" />
+    <Compile Include="Translation\Handlers\SubQueryResultOperatorHandlers.cs" />
     <Compile Include="Translation\Maps\ResultOperatorMap.cs" />
+    <Compile Include="Translation\Maps\SubQueryResultOperatorMap.cs" />
     <Compile Include="Translation\ParseQuery\BasicQueryPiece.cs" />
     <Compile Include="Translation\ParseQuery\JsonConverters\ConstraintSetJsonConverter.cs" />
     <Compile Include="Translation\ParseQuery\JsonConverters\QueryRootJsonConverter.cs" />

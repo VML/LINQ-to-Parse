@@ -87,9 +87,9 @@ namespace GoodlyFere.Parse.Linq.Translation
 
         public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
         {
-            if (ResultOperatorMap.Has(resultOperator.GetType()))
+            if (SubQueryResultOperatorMap.Has(resultOperator.GetType()))
             {
-                ConstraintSet set = ResultOperatorMap.Get(resultOperator.GetType()).Invoke(resultOperator, _values);
+                ConstraintSet set = SubQueryResultOperatorMap.Get(resultOperator.GetType()).Invoke(resultOperator, _values);
                 Query.AddConstraint(set);
             }
 
