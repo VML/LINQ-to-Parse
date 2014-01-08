@@ -38,8 +38,19 @@ using Newtonsoft.Json;
 
 namespace GoodlyFere.Parse
 {
+    public interface IBaseModel
+    {
+        #region Public Properties
+
+        DateTime CreatedAt { get; set; }
+        string ObjectId { get; set; }
+        DateTime UpdatedAt { get; set; }
+
+        #endregion
+    }
+
     [DataContract]
-    public abstract class BaseModel
+    public abstract class BaseModel : IBaseModel
     {
         #region Public Properties
 

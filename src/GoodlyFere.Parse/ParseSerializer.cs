@@ -33,6 +33,7 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 using RestSharp.Serializers;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 #endregion
 

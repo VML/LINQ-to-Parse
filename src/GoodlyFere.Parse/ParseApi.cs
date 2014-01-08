@@ -104,7 +104,7 @@ namespace GoodlyFere.Parse
             return response.Data.Count;
         }
 
-        public T Create<T>(T modelToCreate) where T : BaseModel, new()
+        public T Create<T>(T modelToCreate) where T : IBaseModel, new()
         {
             string uri = GetQueryRequestUri<T>();
             uri += "/" + modelToCreate.ObjectId;
@@ -124,7 +124,7 @@ namespace GoodlyFere.Parse
             return modelToCreate;
         }
 
-        public bool Delete<T>(T modelToDelete) where T : BaseModel, new()
+        public bool Delete<T>(T modelToDelete) where T : IBaseModel, new()
         {
             string uri = GetQueryRequestUri<T>();
             uri += "/" + modelToDelete.ObjectId;
@@ -145,7 +145,7 @@ namespace GoodlyFere.Parse
             return GetResults(response);
         }
 
-        public T Update<T>(T modelToSave) where T : BaseModel, new()
+        public T Update<T>(T modelToSave) where T : IBaseModel, new()
         {
             if (String.IsNullOrWhiteSpace(modelToSave.ObjectId))
             {
@@ -181,6 +181,16 @@ namespace GoodlyFere.Parse
             return response;
         }
 
+        internal RestRequest GetDefaultRequest(string uri)
+        {
+            RestRequest request = new RestRequest(uri)
+                {
+                    RequestFormat = DataFormat.Json,
+                    JsonSerializer = new ParseSerializer()
+                };
+            return request;
+        }
+
         private static void SetParameters(string queryString, RestRequest request)
         {
             if (string.IsNullOrWhiteSpace(queryString))
@@ -194,16 +204,6 @@ namespace GoodlyFere.Parse
             {
                 request.AddParameter(key, parameters[key]);
             }
-        }
-
-        private RestRequest GetDefaultRequest(string uri)
-        {
-            RestRequest request = new RestRequest(uri)
-                {
-                    RequestFormat = DataFormat.Json,
-                    JsonSerializer = new ParseSerializer()
-                };
-            return request;
         }
 
         private string GetQueryRequestUri(Type objectType)

@@ -121,7 +121,10 @@ namespace GoodlyFere.Parse
             }
 
             newUser["password"] = password;
-            RestRequest request = new RestRequest("users") { Method = Method.POST, RequestFormat = DataFormat.Json };
+            newUser.Remove("createdAt");
+            newUser.Remove("updatedAt");
+            RestRequest request = ParseContext.API.GetDefaultRequest("users");
+            request.Method = Method.POST;
             request.AddBody(newUser);
 
             IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request, HttpStatusCode.Created);
