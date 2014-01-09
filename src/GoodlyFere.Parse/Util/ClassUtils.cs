@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParsePointer.cs">
+// <copyright file="ClassUtils.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,38 +31,40 @@
 
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
+using GoodlyFere.Parse.Attributes;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Util
 {
-    [DataContract]
-    public class ParsePointer<T> : BaseModel
+    public static class ClassUtils
     {
-        #region Constructors and Destructors
+        #region Public Methods
 
-        public ParsePointer()
-            : this(ClassUtils.GetParseClassName<T>())
+        public static string GetDataMemberPropertyName(MemberInfo member)
         {
-            ParseType = "Pointer";
+            CustomAttributeData attr =
+                member.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(DataMemberAttribute));
+
+            return attr != null
+                       ? (string)attr.NamedArguments.First(na => na.MemberName == "Name").TypedValue.Value
+                       : member.Name;
         }
 
-        public ParsePointer(string className)
+        public static string GetParseClassName<T>()
         {
-            ClassName = className;
-            ParseType = "Pointer";
+            return GetParseClassName(typeof(T));
         }
 
-        #endregion
+        public static string GetParseClassName(Type objectType)
+        {
+            CustomAttributeData attr =
+                objectType.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
 
-        #region Public Properties
-
-        [DataMember(Name = "className")]
-        public string ClassName { get; set; }
-
-        [DataMember(Name = "__type")]
-        public string ParseType { get; set; }
+            return attr != null ? (string)attr.ConstructorArguments[0].Value : objectType.Name;
+        }
 
         #endregion
     }

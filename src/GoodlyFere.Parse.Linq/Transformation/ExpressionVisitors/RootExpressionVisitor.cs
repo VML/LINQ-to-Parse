@@ -34,6 +34,8 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using GoodlyFere.Parse.Linq.CustomExpressions;
+using GoodlyFere.Parse.Model;
+using GoodlyFere.Parse.Util;
 using Remotion.Linq.Parsing;
 
 #endregion

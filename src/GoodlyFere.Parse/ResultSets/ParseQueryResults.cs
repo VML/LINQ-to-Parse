@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BaseModel.cs">
+// <copyright file="ParseQueryResults.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,41 +29,21 @@
 
 #region Usings
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
+using System;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.ResultSets
 {
-    public interface IBaseModel
+    public class ParseQueryResults<T>
     {
         #region Public Properties
 
-        DateTime CreatedAt { get; set; }
-        string ObjectId { get; set; }
-        DateTime UpdatedAt { get; set; }
-
-        #endregion
-    }
-
-    [DataContract]
-    public abstract class BaseModel : IBaseModel
-    {
-        #region Public Properties
-
-        [DataMember(Name = "createdAt")]
-        [JsonIgnore]
-        public DateTime CreatedAt { get; set; }
-
-        [DataMember(Name = "objectId")]
-        public string ObjectId { get; set; }
-
-        [DataMember(Name = "updatedAt")]
-        [JsonIgnore]
-        public DateTime UpdatedAt { get; set; }
+        public int Code { get; set; }
+        public string Error { get; set; }
+        public List<T> Results { get; set; }
 
         #endregion
     }

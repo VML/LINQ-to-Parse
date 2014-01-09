@@ -38,7 +38,7 @@ using RestSharp;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Model
 {
     [DataContract]
     [ParseClassName("_User")]

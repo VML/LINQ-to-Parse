@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ModelExtensions.cs">
+// <copyright file="ParseSerializer.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,28 +31,39 @@
 
 using System;
 using System.Linq;
+using Newtonsoft.Json;
+using RestSharp.Serializers;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.JSON
 {
-    public static class ModelExtensions
+    public class ParseSerializer : ISerializer
     {
+        #region Constructors and Destructors
+
+        public ParseSerializer()
+        {
+            ContentType = "application/json";
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        public string ContentType { get; set; }
+        public string DateFormat { get; set; }
+        public string Namespace { get; set; }
+        public string RootElement { get; set; }
+
+        #endregion
+
         #region Public Methods
 
-        public static T Create<T>(this T model) where T : IBaseModel, new()
+        public string Serialize(object obj)
         {
-            return ParseContext.API.Create(model);
-        }
-
-        public static bool Delete<T>(this T model) where T : IBaseModel, new()
-        {
-            return ParseContext.API.Delete(model);
-        }
-
-        public static T Update<T>(this T model) where T : IBaseModel, new()
-        {
-            return ParseContext.API.Update(model);
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            return JsonConvert.SerializeObject(obj, settings);
         }
 
         #endregion

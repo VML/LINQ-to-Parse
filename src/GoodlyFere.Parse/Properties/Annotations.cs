@@ -34,7 +34,7 @@ using System.Linq;
 
 #endregion
 
-namespace GoodlyFere.Parse.Annotations
+namespace GoodlyFere.Parse.Properties
 {
     /// <summary>
     ///     Indicates that marked element should be localized or not.

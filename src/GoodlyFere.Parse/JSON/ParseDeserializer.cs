@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseGeoPoint.cs">
+// <copyright file="ParseDeserializer.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,34 +31,30 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using RestSharp;
+using RestSharp.Deserializers;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.JSON
 {
-    [DataContract]
-    public class ParseGeoPoint
+    public class ParseDeserializer : IDeserializer
     {
-        #region Constructors and Destructors
+        #region Public Properties
 
-        public ParseGeoPoint()
-        {
-            ParseType = "GeoPoint";
-        }
+        public string DateFormat { get; set; }
+        public string Namespace { get; set; }
+        public string RootElement { get; set; }
 
         #endregion
 
-        #region Public Properties
+        #region Public Methods
 
-        [DataMember(Name = "latitude")]
-        public double Latitude { get; set; }
-
-        [DataMember(Name = "longitude")]
-        public double Longitude { get; set; }
-
-        [DataMember(Name = "__type")]
-        public string ParseType { get; set; }
+        public T Deserialize<T>(IRestResponse response)
+        {
+            return JsonConvert.DeserializeObject<T>(response.Content);
+        }
 
         #endregion
     }

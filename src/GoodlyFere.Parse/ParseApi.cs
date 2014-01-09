@@ -34,7 +34,11 @@ using System.Collections.Specialized;
 using System.Linq;
 using System;
 using System.Net;
+using GoodlyFere.Parse.Extensions;
 using GoodlyFere.Parse.Interfaces;
+using GoodlyFere.Parse.JSON;
+using GoodlyFere.Parse.ResultSets;
+using GoodlyFere.Parse.Util;
 using RestSharp;
 using RestSharp.Contrib;
 

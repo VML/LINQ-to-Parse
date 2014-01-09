@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseQueryResults.cs">
+// <copyright file="ParseCountResults.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,21 +29,18 @@
 
 #region Usings
 
-using System.Collections.Generic;
 using System.Linq;
 using System;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.ResultSets
 {
-    public class ParseQueryResults<T>
+    public class ParseCountResults
     {
         #region Public Properties
 
-        public int Code { get; set; }
-        public string Error { get; set; }
-        public List<T> Results { get; set; }
+        public long Count { get; set; }
 
         #endregion
     }

@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ClassUtils.cs">
+// <copyright file="BaseModel.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -31,40 +31,29 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
-using GoodlyFere.Parse.Attributes;
+using GoodlyFere.Parse.Interfaces;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Model
 {
-    public static class ClassUtils
+    [DataContract]
+    public abstract class BaseModel : IBaseModel
     {
-        #region Public Methods
+        #region Public Properties
 
-        public static string GetDataMemberPropertyName(MemberInfo member)
-        {
-            CustomAttributeData attr =
-                member.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(DataMemberAttribute));
+        [DataMember(Name = "createdAt")]
+        [JsonIgnore]
+        public DateTime CreatedAt { get; set; }
 
-            return attr != null
-                       ? (string)attr.NamedArguments.First(na => na.MemberName == "Name").TypedValue.Value
-                       : member.Name;
-        }
+        [DataMember(Name = "objectId")]
+        public string ObjectId { get; set; }
 
-        public static string GetParseClassName<T>()
-        {
-            return GetParseClassName(typeof(T));
-        }
-
-        public static string GetParseClassName(Type objectType)
-        {
-            CustomAttributeData attr =
-                objectType.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(ParseClassNameAttribute));
-
-            return attr != null ? (string)attr.ConstructorArguments[0].Value : objectType.Name;
-        }
+        [DataMember(Name = "updatedAt")]
+        [JsonIgnore]
+        public DateTime UpdatedAt { get; set; }
 
         #endregion
     }

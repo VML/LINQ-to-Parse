@@ -34,11 +34,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Model
 {
     [DataContract]
     public class ParseObject : IDictionary<string, object>

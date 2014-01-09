@@ -32,6 +32,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using GoodlyFere.Parse.Util;
 using Remotion.Linq.Parsing;
 
 #endregion

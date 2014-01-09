@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParseCountResults.cs">
+// <copyright file="ParsePointer.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -29,18 +29,41 @@
 
 #region Usings
 
-using System.Linq;
 using System;
+using System.Linq;
+using System.Runtime.Serialization;
+using GoodlyFere.Parse.Util;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Model
 {
-    public class ParseCountResults
+    [DataContract]
+    public class ParsePointer<T> : BaseModel
     {
+        #region Constructors and Destructors
+
+        public ParsePointer()
+            : this(ClassUtils.GetParseClassName<T>())
+        {
+            ParseType = "Pointer";
+        }
+
+        public ParsePointer(string className)
+        {
+            ClassName = className;
+            ParseType = "Pointer";
+        }
+
+        #endregion
+
         #region Public Properties
 
-        public long Count { get; set; }
+        [DataMember(Name = "className")]
+        public string ClassName { get; set; }
+
+        [DataMember(Name = "__type")]
+        public string ParseType { get; set; }
 
         #endregion
     }

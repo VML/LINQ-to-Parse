@@ -36,7 +36,7 @@ using LoggingExtensions.Logging;
 
 #endregion
 
-namespace GoodlyFere.Parse
+namespace GoodlyFere.Parse.Extensions
 {
     /// <summary>
     ///     Extensions to help make logging awesome - this should be installed into the root namespace of your application
