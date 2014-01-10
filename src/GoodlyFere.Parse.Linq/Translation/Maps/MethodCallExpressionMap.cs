@@ -30,16 +30,21 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Translation.Handlers;
 using GoodlyFere.Parse.Linq.Translation.ParseQuery;
+using GoodlyFere.Parse.Model;
 
 #endregion
 
 namespace GoodlyFere.Parse.Linq.Translation.Maps
 {
     internal delegate void MethodCallFactoryMethod(
+        QueryRoot query, MethodCallExpression expression);
+
+    internal delegate IList<IQueryPiece> MethodCallHandlerFactoryMethod(
         QueryRoot query, MethodCallExpression expression);
 
     internal class MethodCallExpressionMap : Map<MethodCallExpressionMap, Type, MethodCallFactoryMethod>
@@ -49,7 +54,7 @@ namespace GoodlyFere.Parse.Linq.Translation.Maps
         public MethodCallExpressionMap()
         {
             Add(typeof(String), MethodCallExpressionHandlers.HandleStringMethods);
-            //Add(typeof(String), MethodCallExpressionHandlers.String);
+            Add(typeof(ParseGeoPoint), MethodCallExpressionHandlers.HandleParseGeoPointMethods);
         }
 
         #endregion

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodlyFere.Parse.DefaultImplementations;
 using GoodlyFere.Parse.Linq.Tests.Support;
+using GoodlyFere.Parse.Model;
 using Xunit;
 using Xunit.Extensions;
 

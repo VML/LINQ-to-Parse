@@ -35,6 +35,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Faker;
 using GoodlyFere.Parse.DefaultImplementations;
+using GoodlyFere.Parse.Interfaces;
+using GoodlyFere.Parse.Model;
+using GoodlyFere.Parse.ResultSets;
 using Newtonsoft.Json;
 using Plant.Core;
 using RestSharp;
@@ -44,7 +47,7 @@ using RestSharp;
 namespace GoodlyFere.Parse.Linq.Tests.Support
 {
     [DataContract]
-    public class TestObject : BaseModel
+    public class TestObject : BaseModel, ILocatable<ParseGeoPoint>
     {
         #region Public Properties
 
@@ -63,9 +66,11 @@ namespace GoodlyFere.Parse.Linq.Tests.Support
         [DataMember(Name = "lastName")]
         public string LastName { get; set; }
 
+        public ParseGeoPoint Location { get; set; }
+
         [DataMember(Name = "middleName")]
         public string MiddleName { get; set; }
-        
+
         [DataMember(Name = "test2")]
         public ParsePointer<Test2Object> Test2Pointer { get; set; }
 

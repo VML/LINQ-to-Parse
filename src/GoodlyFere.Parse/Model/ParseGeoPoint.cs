@@ -61,5 +61,14 @@ namespace GoodlyFere.Parse.Model
         public string ParseType { get; set; }
 
         #endregion
+
+        #region Public Methods
+
+        public bool NearSphere(double latitude, double longitude)
+        {
+            throw new NotImplementedException("This method facilitates LINQ NearSphere queries only.");
+        }
+
+        #endregion
     }
 }

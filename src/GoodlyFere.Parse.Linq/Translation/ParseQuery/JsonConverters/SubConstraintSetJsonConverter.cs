@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Map.cs">
+// <copyright file="ConstraintSetJsonConverter.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,55 +30,47 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Translation.ParseQuery.JsonConverters
 {
-    internal class Map<TInstance, TKey, TValue> : Dictionary<TKey, TValue>
-        where TValue : class
-        where TInstance : Map<TInstance, TKey, TValue>, new()
+    internal class SubConstraintSetJsonConverter : ConstraintSetJsonConverter
     {
-        #region Constants and Fields
-
-        private static TInstance _instance;
-
-        #endregion
-
-        #region Public Properties
-
-        public static TInstance Instance
-        {
-            get
-            {
-                return _instance ?? (_instance = new TInstance());
-            }
-        }
-
-        #endregion
-
         #region Public Methods
 
-        public static TValue Get(TKey type)
+        public override bool CanConvert(Type objectType)
         {
-            return Instance.GetValue(type);
+            return objectType == typeof(ConstraintSetJsonConverter);
         }
 
-        public static bool Has(TKey type)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            return Instance.HasValue(type);
-        }
+            SubConstraintSet set = (SubConstraintSet)value;
 
-        public TValue GetValue(TKey type)
-        {
-            return HasValue(type) ? Instance[type] : null;
-        }
+            bool endObject = false;
+            if (writer.WriteState == WriteState.Array)
+            {
+                endObject = true;
+                writer.WriteStartObject();
+            }
 
-        public bool HasValue(TKey type)
-        {
-            return Instance.ContainsKey(type);
+            writer.WritePropertyName(PropNameResolver.GetResolvedPropertyName(set.Key));
+            writer.WriteStartObject();
+            foreach (var c in set.Operators)
+            {
+                writer.WritePropertyName(c.Key);
+                serializer.Serialize(writer, c.Value);
+            }
+            writer.WriteEndObject();
+
+            if (endObject)
+            {
+                writer.WriteEndObject();
+            }
         }
 
         #endregion

@@ -8,7 +8,7 @@ using GoodlyFere.Parse.Model;
 
 namespace GoodlyFere.Parse.Interfaces
 {
-    internal interface ILocatable<T>
+    public interface ILocatable<T>
         where T : ParseGeoPoint
     {
         #region Public Properties

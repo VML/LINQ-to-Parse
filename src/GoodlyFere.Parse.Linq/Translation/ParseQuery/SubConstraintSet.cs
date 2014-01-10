@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Map.cs">
+// <copyright file="ConstraintSet.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -30,55 +30,22 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using GoodlyFere.Parse.Linq.Translation.ParseQuery.JsonConverters;
+using Newtonsoft.Json;
 
 #endregion
 
-namespace GoodlyFere.Parse.Linq
+namespace GoodlyFere.Parse.Linq.Translation.ParseQuery
 {
-    internal class Map<TInstance, TKey, TValue> : Dictionary<TKey, TValue>
-        where TValue : class
-        where TInstance : Map<TInstance, TKey, TValue>, new()
+    [JsonConverter(typeof(SubConstraintSetJsonConverter))]
+    internal class SubConstraintSet : ConstraintSet
     {
-        #region Constants and Fields
+        #region Constructors and Destructors
 
-        private static TInstance _instance;
-
-        #endregion
-
-        #region Public Properties
-
-        public static TInstance Instance
+        public SubConstraintSet(string key)
+            : base(key)
         {
-            get
-            {
-                return _instance ?? (_instance = new TInstance());
-            }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public static TValue Get(TKey type)
-        {
-            return Instance.GetValue(type);
-        }
-
-        public static bool Has(TKey type)
-        {
-            return Instance.HasValue(type);
-        }
-
-        public TValue GetValue(TKey type)
-        {
-            return HasValue(type) ? Instance[type] : null;
-        }
-
-        public bool HasValue(TKey type)
-        {
-            return Instance.ContainsKey(type);
         }
 
         #endregion

@@ -32,7 +32,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GoodlyFere.Parse.Extensions;
 using GoodlyFere.Parse.Linq.Tests.Support;
+using GoodlyFere.Parse.Model;
 
 #endregion
 
@@ -130,6 +132,13 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
                                  select to),
                                 "where={\"test2\":{\"__type\":\"Pointer\",\"className\":\"Test2Object\",\"objectId\":\"dkdfa923\"}}"
                             },
+                            new object[]
+                                {
+                                    (from to in ParseQueryFactory.Queryable<TestObject>()
+                                         where to.Location.NearSphere(30.0,-20.0)
+                                         select to),
+                                    "where={\"location\":{\"$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":30.0,\"longitude\":-20.0}}}"
+                                }, 
                     };
             }
         }

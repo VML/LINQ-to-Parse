@@ -1,7 +1,7 @@
 ﻿#region License
 
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionHandlers.cs">
+// <copyright file="StringMethodHandlers.cs">
 // LINQ-to-Parse, a LINQ interface to the Parse.com REST API.
 //  
 // Copyright (C) 2013 Benjamin Ramey
@@ -34,53 +34,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Translation.ExpressionVisitors;
-using GoodlyFere.Parse.Linq.Translation.Maps;
 using GoodlyFere.Parse.Linq.Translation.ParseQuery;
 
 #endregion
 
 namespace GoodlyFere.Parse.Linq.Translation.Handlers
 {
-    internal static class MethodCallExpressionHandlers
+    internal static class ParseGeoPointMethodHandlers
     {
         #region Methods
 
-        internal static void HandleParseGeoPointMethods(QueryRoot query, MethodCallExpression expression)
+        internal static IList<IQueryPiece> HandleNearSphere(QueryRoot query, MethodCallExpression expression)
         {
-            Handle(query, expression, ParseGeoPointMethodHandlersMap.Instance);
-        }
+            object latitude = ConstantValueFinder.Find(expression.Arguments[0]);
+            object longitude = ConstantValueFinder.Find(expression.Arguments[1]);
 
-        internal static void HandleStringMethods(QueryRoot query, MethodCallExpression expression)
-        {
-            Handle(query, expression, StringMethodHandlersMap.Instance);
-        }
+            SubConstraintSet set = new SubConstraintSet("$nearSphere");
+            set.Operators.Add(new BasicQueryPiece("__type", "GeoPoint"));
+            set.Operators.Add(new BasicQueryPiece("latitude", latitude));
+            set.Operators.Add(new BasicQueryPiece("longitude", longitude));
 
-        private static void AddConstraintToQuery(QueryRoot query, IEnumerable<IQueryPiece> operands, ConstraintSet set)
-        {
-            foreach (var op in operands)
-            {
-                set.Operators.Add(op);
-            }
-            query.AddConstraint(set);
-        }
-
-        private static void Handle<T>(
-            QueryRoot query, MethodCallExpression expression, T map)
-            where T : Map<T, string, MethodCallHandlerFactoryMethod>, new()
-        {
-            string propertyName = MemberNameFinder.Find(expression.Object);
-            ConstraintSet set = new ConstraintSet(propertyName);
-
-            if (map.HasValue(expression.Method.Name))
-            {
-                var method = map.GetValue(expression.Method.Name);
-                IList<IQueryPiece> operands = method(query, expression);
-                AddConstraintToQuery(query, operands, set);
-            }
-            else
-            {
-                throw new Exception(string.Format("Method call not handled! {0}", expression.Method.Name));
-            }
+            return new List<IQueryPiece> { set };
         }
 
         #endregion

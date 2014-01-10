@@ -40,18 +40,18 @@ namespace GoodlyFere.Parse.Linq.Translation.ParseQuery.JsonConverters
 {
     internal class ConstraintSetJsonConverter : JsonConverter
     {
-        #region Constants and Fields
-
-        private static readonly CamelCasePropertyNamesContractResolver PropNameResolver;
-
-        #endregion
-
         #region Constructors and Destructors
 
         static ConstraintSetJsonConverter()
         {
             PropNameResolver = new CamelCasePropertyNamesContractResolver();
         }
+
+        #endregion
+
+        #region Properties
+
+        protected static CamelCasePropertyNamesContractResolver PropNameResolver { get; private set; }
 
         #endregion
 
@@ -83,8 +83,7 @@ namespace GoodlyFere.Parse.Linq.Translation.ParseQuery.JsonConverters
             writer.WriteStartObject();
             foreach (var c in set.Operators)
             {
-                writer.WritePropertyName(c.Key);
-                serializer.Serialize(writer, c.Value);
+                serializer.Serialize(writer, c);
             }
             writer.WriteEndObject();
 

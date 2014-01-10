@@ -44,10 +44,10 @@ namespace GoodlyFere.Parse.Linq.Translation.Handlers
     {
         #region Methods
 
-        internal static IList<BasicQueryPiece> HandleContains(QueryRoot query, MethodCallExpression expression)
+        internal static IList<IQueryPiece> HandleContains(QueryRoot query, MethodCallExpression expression)
         {
             object value = ConstantValueFinder.Find(expression);
-            List<BasicQueryPiece> pieces = new List<BasicQueryPiece>
+            List<IQueryPiece> pieces = new List<IQueryPiece>
                 {
                     new BasicQueryPiece("$regex", value),
                     new BasicQueryPiece("$options", "mi")
