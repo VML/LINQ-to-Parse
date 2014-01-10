@@ -31,10 +31,10 @@
 
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using GoodlyFere.Parse.Linq.Tests.Support;
 using GoodlyFere.Parse.Linq.Transformation;
 using GoodlyFere.Parse.Linq.Translation;
+using NSubstitute;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
 using Xunit;
@@ -51,7 +51,14 @@ namespace GoodlyFere.Parse.Linq.Tests.GenerationTests
         [Fact]
         public void Count()
         {
-            int count = ParseQueryFactory.Queryable<TestObject>().Count();
+            var mockExecutor = Substitute.For<IQueryExecutor>();
+            QueryModel queryModel = null;
+            mockExecutor.When(me => me.ExecuteScalar<Int32>(Arg.Any<QueryModel>()))
+                        .Do(ci => queryModel = (QueryModel)ci.Args()[0]);
+
+            int count = ParseQueryFactory.Queryable<TestObject>(mockExecutor).Count();
+
+            DoTranslation(queryModel, "limit=0&count=1");
         }
 
         [Theory]
