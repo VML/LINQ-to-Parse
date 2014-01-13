@@ -188,7 +188,7 @@ namespace GoodlyFere.Parse
         internal RestRequest GetDefaultRequest(string uri)
         {
             RestRequest request = new RestRequest(uri)
-                {
+                {   
                     RequestFormat = DataFormat.Json,
                     JsonSerializer = new ParseSerializer()
                 };

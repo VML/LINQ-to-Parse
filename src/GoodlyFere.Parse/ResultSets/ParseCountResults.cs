@@ -36,7 +36,7 @@ using System;
 
 namespace GoodlyFere.Parse.ResultSets
 {
-    public class ParseCountResults
+    public class ParseCountResults : ParseBasicResponse
     {
         #region Public Properties
 

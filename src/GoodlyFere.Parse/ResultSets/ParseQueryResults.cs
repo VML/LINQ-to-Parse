@@ -37,12 +37,10 @@ using System;
 
 namespace GoodlyFere.Parse.ResultSets
 {
-    public class ParseQueryResults<T>
+    public class ParseQueryResults<T> : ParseBasicResponse
     {
         #region Public Properties
 
-        public int Code { get; set; }
-        public string Error { get; set; }
         public List<T> Results { get; set; }
 
         #endregion

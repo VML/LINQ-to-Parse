@@ -34,6 +34,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using GoodlyFere.Parse.Attributes;
+using GoodlyFere.Parse.ResultSets;
 using RestSharp;
 
 #endregion
@@ -91,8 +92,20 @@ namespace GoodlyFere.Parse.Model
 
         public static ParseUser GetByToken(string sessionToken)
         {
-            RestRequest request = new RestRequest("users/me") { Method = Method.GET };
+            RestRequest request = ParseContext.API.GetDefaultRequest("users/me");
+            request.Method = Method.GET;
             return ExecuteUserRequest(request);
+        }
+
+        public static bool ResetPassword(string email)
+        {
+            RestRequest request = ParseContext.API.GetDefaultRequest("requestPasswordReset");
+            request.Method = Method.POST;
+            request.AddBody(new { email });
+
+            IRestResponse<ParseBasicResponse> response = ParseContext.API.ExecuteRequest<ParseBasicResponse>(request);
+
+            return string.IsNullOrWhiteSpace(response.Data.Error) && response.Data.Code == 0;
         }
 
         public static ParseUser SignIn(string username, string password)
@@ -106,7 +119,8 @@ namespace GoodlyFere.Parse.Model
                 throw new ArgumentNullException("password");
             }
 
-            RestRequest request = new RestRequest("login") { Method = Method.GET };
+            RestRequest request = ParseContext.API.GetDefaultRequest("login");
+            request.Method = Method.GET;
             request.AddParameter("username", username);
             request.AddParameter("password", password);
 
@@ -127,7 +141,8 @@ namespace GoodlyFere.Parse.Model
             request.Method = Method.POST;
             request.AddBody(newUser);
 
-            IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request, HttpStatusCode.Created);
+            IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(
+                request, HttpStatusCode.Created);
             return response.Data;
         }
 
