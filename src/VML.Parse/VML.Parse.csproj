@@ -72,7 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ParseClassNameAttribute.cs" />
+    <Compile Include="Model\AuthData.cs" />
     <Compile Include="Model\BaseModel.cs" />
+    <Compile Include="Model\FacebookAuthData.cs" />
     <Compile Include="ResultSets\ParseBasicResponse.cs" />
     <Compile Include="Util\ClassUtils.cs" />
     <Compile Include="DefaultImplementations\AppSettingsParseApiSettingsProvider.cs" />

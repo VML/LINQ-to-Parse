@@ -3,7 +3,7 @@
 //   Copyright VML 2014. All rights reserved.
 //  </copyright>
 //  <created>01/09/2014 5:08 PM</created>
-//  <updated>01/23/2014 2:32 PM by Ben Ramey</updated>
+//  <updated>01/23/2014 2:42 PM by Ben Ramey</updated>
 // --------------------------------------------------------------------------------------------------------------------
 
 #region Usings
@@ -25,6 +25,19 @@ namespace VML.Parse.Model
     public class ParseUser : ParseObject
     {
         #region Public Properties
+
+        [DataMember(Name = "authData")]
+        public AuthData AuthData
+        {
+            get
+            {
+                return GetProperty<AuthData>("authData");
+            }
+            set
+            {
+                SetProperty("authData", value);
+            }
+        }
 
         [DataMember(Name = "email")]
         public string Email
@@ -68,6 +81,27 @@ namespace VML.Parse.Model
         #endregion
 
         #region Public Methods
+
+        public static ParseUser FacebookSignIn(string id, string accessToken, DateTime expirationDate)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentNullException("id");
+            }
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                throw new ArgumentNullException("accessToken");
+            }
+
+            FacebookAuthData facebookAuthData = new FacebookAuthData(id, accessToken, expirationDate);
+            AuthData authData = new AuthData(facebookAuthData);
+
+            RestRequest request = ParseContext.API.GetDefaultRequest("users");
+            request.Method = Method.POST;
+            request.AddBody(new { authData });
+
+            return ExecuteUserRequest(request);
+        }
 
         public static ParseUser GetByToken(string sessionToken)
         {
