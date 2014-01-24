@@ -11,6 +11,7 @@
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -32,7 +33,8 @@ namespace VML.Parse.JSON
 
         public T Deserialize<T>(IRestResponse response)
         {
-            return JsonConvert.DeserializeObject<T>(response.Content);
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            return JsonConvert.DeserializeObject<T>(response.Content, settings);
         }
 
         #endregion

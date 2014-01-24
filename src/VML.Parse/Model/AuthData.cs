@@ -3,21 +3,27 @@
 //   Copyright VML 2014. All rights reserved.
 //  </copyright>
 //  <created>01/23/2014 2:38 PM</created>
-//  <updated>01/23/2014 2:39 PM by Ben Ramey</updated>
+//  <updated>01/24/2014 8:17 AM by Ben Ramey</updated>
 // --------------------------------------------------------------------------------------------------------------------
 
 #region Usings
 
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 
 #endregion
 
 namespace VML.Parse.Model
 {
+    [DataContract]
     public class AuthData
     {
         #region Constructors and Destructors
+
+        public AuthData()
+        {
+        }
 
         public AuthData(FacebookAuthData facebook)
         {
@@ -28,6 +34,7 @@ namespace VML.Parse.Model
 
         #region Public Properties
 
+        [DataMember(Name = "facebook")]
         public FacebookAuthData Facebook { get; set; }
 
         #endregion

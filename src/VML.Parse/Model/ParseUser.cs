@@ -3,7 +3,7 @@
 //   Copyright VML 2014. All rights reserved.
 //  </copyright>
 //  <created>01/09/2014 5:08 PM</created>
-//  <updated>01/23/2014 2:42 PM by Ben Ramey</updated>
+//  <updated>01/24/2014 8:40 AM by Ben Ramey</updated>
 // --------------------------------------------------------------------------------------------------------------------
 
 #region Usings
@@ -27,17 +27,7 @@ namespace VML.Parse.Model
         #region Public Properties
 
         [DataMember(Name = "authData")]
-        public AuthData AuthData
-        {
-            get
-            {
-                return GetProperty<AuthData>("authData");
-            }
-            set
-            {
-                SetProperty("authData", value);
-            }
-        }
+        public AuthData AuthData { get; set; }
 
         [DataMember(Name = "email")]
         public string Email
@@ -82,7 +72,8 @@ namespace VML.Parse.Model
 
         #region Public Methods
 
-        public static ParseUser FacebookSignIn(string id, string accessToken, DateTime expirationDate)
+        public static ParseUser FacebookSignIn(
+            string username, string email, string id, string accessToken, DateTime expirationDate)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -98,7 +89,7 @@ namespace VML.Parse.Model
 
             RestRequest request = ParseContext.API.GetDefaultRequest("users");
             request.Method = Method.POST;
-            request.AddBody(new { authData });
+            request.AddBody(new { username, email, authData });
 
             return ExecuteUserRequest(request);
         }
@@ -177,7 +168,8 @@ namespace VML.Parse.Model
 
         private static ParseUser ExecuteUserRequest(RestRequest request)
         {
-            IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(request);
+            IRestResponse<ParseUser> response = ParseContext.API.ExecuteRequest<ParseUser>(
+                request, HttpStatusCode.OK, HttpStatusCode.Created);
             return response.Data;
         }
 
