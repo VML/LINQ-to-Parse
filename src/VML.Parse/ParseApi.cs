@@ -3,7 +3,7 @@
 //   Copyright VML 2014. All rights reserved.
 //  </copyright>
 //  <created>12/09/2013 10:17 AM</created>
-//  <updated>01/23/2014 2:32 PM by Ben Ramey</updated>
+//  <updated>01/24/2014 10:28 AM by Ben Ramey</updated>
 // --------------------------------------------------------------------------------------------------------------------
 
 #region Usings
@@ -13,6 +13,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System;
 using System.Net;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Contrib;
 using VML.Parse.Extensions;
@@ -59,7 +60,8 @@ namespace VML.Parse
                     response.StatusCode,
                     response.StatusDescription));
 
-            throw new Exception(response.StatusDescription);
+            ParseBasicResponse basicResponse = JsonConvert.DeserializeObject<ParseBasicResponse>(response.Content);
+            throw new Exception(basicResponse.Error);
         }
 
         public static void CheckForResponseError<T>(IRestResponse<T> response)

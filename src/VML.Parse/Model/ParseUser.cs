@@ -3,7 +3,7 @@
 //   Copyright VML 2014. All rights reserved.
 //  </copyright>
 //  <created>01/09/2014 5:08 PM</created>
-//  <updated>01/24/2014 8:40 AM by Ben Ramey</updated>
+//  <updated>01/24/2014 10:50 AM by Ben Ramey</updated>
 // --------------------------------------------------------------------------------------------------------------------
 
 #region Usings
@@ -27,7 +27,17 @@ namespace VML.Parse.Model
         #region Public Properties
 
         [DataMember(Name = "authData")]
-        public AuthData AuthData { get; set; }
+        public AuthData AuthData
+        {
+            get
+            {
+                return GetProperty<AuthData>("authData");
+            }
+            set
+            {
+                SetProperty("authData", value);
+            }
+        }
 
         [DataMember(Name = "email")]
         public string Email
@@ -94,10 +104,21 @@ namespace VML.Parse.Model
             return ExecuteUserRequest(request);
         }
 
-        public static ParseUser GetByToken(string sessionToken)
+        public static ParseUser GetCurrent()
         {
             RestRequest request = ParseContext.API.GetDefaultRequest("users/me");
             request.Method = Method.GET;
+            return ExecuteUserRequest(request);
+        }
+
+        public static ParseUser LinkToFacebook(string userObjectId, FacebookAuthData facebookAuthData)
+        {
+            AuthData authData = new AuthData(facebookAuthData);
+
+            RestRequest request = ParseContext.API.GetDefaultRequest("users/" + userObjectId);
+            request.Method = Method.PUT;
+            request.AddBody(new { authData });
+
             return ExecuteUserRequest(request);
         }
 
@@ -150,11 +171,26 @@ namespace VML.Parse.Model
             return response.Data;
         }
 
-        public static bool ValidateSession(string sessionToken)
+        public static bool UnlinkFromFacebook(string userObjectId)
+        {
+            if (string.IsNullOrWhiteSpace(userObjectId))
+            {
+                throw new ArgumentNullException("userObjectId");
+            }
+
+            RestRequest request = ParseContext.API.GetDefaultRequest("users/" + userObjectId);
+            request.Method = Method.PUT;
+            request.AddBody(new { authData = new AuthData() });
+
+            var response = ParseContext.API.ExecuteRequest<ParseBasicResponse>(request);
+            return string.IsNullOrWhiteSpace(response.Data.Error);
+        }
+
+        public static bool ValidateSession()
         {
             try
             {
-                return GetByToken(sessionToken) != null;
+                return GetCurrent() != null;
             }
             catch (Exception)
             {
