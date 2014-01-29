@@ -1,5 +1,5 @@
 properties { 
-  $solution_name = "GoodlyFere.Parse.Linq"
+  $solution_name = "VML.Parse.Linq"
   $base_dir  = resolve-path ..\
   $build_base_dir = "$base_dir\build"
   $output_dir = "$build_base_dir\output"
