@@ -12,6 +12,8 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using VML.Parse.Attributes;
 using VML.Parse.ResultSets;
@@ -162,6 +164,7 @@ namespace VML.Parse.Model
             newUser["password"] = password;
             newUser.Remove("createdAt");
             newUser.Remove("updatedAt");
+            newUser.Remove("authData");
             RestRequest request = ParseContext.API.GetDefaultRequest("users");
             request.Method = Method.POST;
             request.AddBody(newUser);
