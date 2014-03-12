@@ -15,19 +15,34 @@ using VML.Parse.ResultSets;
 
 namespace VML.Parse.Defaults
 {
-    internal class RequestExecutor : IRequestExecutor
+    public class RequestExecutor : IRequestExecutor
     {
         #region Constants and Fields
 
+        private readonly RestClient _restClient;
         private readonly IParseApiSettingsProvider _settingsProvider;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public RequestExecutor(IParseApiSettingsProvider settingsProvider)
+        public RequestExecutor()
+            : this(null, null)
         {
-            _settingsProvider = settingsProvider;
+        }
+
+        public RequestExecutor(IParseApiSettingsProvider settingsProvider)
+            : this(null, settingsProvider)
+        {
+        }
+
+        public RequestExecutor(RestClient restClient, IParseApiSettingsProvider settingsProvider)
+        {
+            _restClient = restClient ?? new RestClient();
+            _settingsProvider = settingsProvider ?? new AppSettingsParseApiSettingsProvider();
+
+            _restClient.BaseUrl = _settingsProvider.ApiUrl;
+            _restClient.AddHandler("application/json", new ParseDeserializer());
         }
 
         #endregion
@@ -70,11 +85,9 @@ namespace VML.Parse.Defaults
         public IRestResponse<T> ExecuteRequest<T>(IRestRequest request, params HttpStatusCode[] acceptableStatusCodes)
             where T : new()
         {
-            RestClient client = new RestClient(_settingsProvider.ApiUrl);
-            client.AddHandler("application/json", new ParseDeserializer());
             AddParseHeaders(request);
 
-            IRestResponse<T> response = client.Execute<T>(request);
+            IRestResponse<T> response = _restClient.Execute<T>(request);
 
             CheckForResponseError(response);
             CheckForParseError(response, acceptableStatusCodes);

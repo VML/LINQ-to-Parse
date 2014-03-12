@@ -90,6 +90,7 @@
     <Compile Include="Support\TestExecutor.cs" />
     <Compile Include="Support\TestObject.cs" />
     <Compile Include="Unit\Defaults\AppSettingsParseApiKeyProviderTests.cs" />
+    <Compile Include="Unit\Defaults\RequestExecutorTests.cs" />
     <Compile Include="Unit\ParseApiTests.cs" />
     <Compile Include="Unit\ParseApiTests.theorydata.cs" />
   </ItemGroup>

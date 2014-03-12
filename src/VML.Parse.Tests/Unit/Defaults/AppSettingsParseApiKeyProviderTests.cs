@@ -11,6 +11,7 @@
 using System;
 using System.Configuration;
 using System.Linq;
+using FluentAssertions;
 using VML.Parse.Defaults;
 using Xunit;
 
@@ -41,24 +42,33 @@ namespace VML.Parse.Tests.Unit.Defaults
         public void ApplicationId_MatchesAppSettings()
         {
             string appId = ConfigurationManager.AppSettings["ParseApplicationId"];
-            Assert.NotNull(appId);
-            Assert.Equal(appId, _provider.ApplicationId);
+            appId.Should().NotBeNull();
+
+            _provider.ApplicationId.Should().Be(appId);
+        }
+
+        [Fact]
+        public void CurrentUserSessionToken_IsEmptyString()
+        {
+            _provider.CurrentUserSessionToken.Should().BeNullOrEmpty();
         }
 
         [Fact]
         public void ParseApiUrl_MatchesAppSettings()
         {
             string apiUrl = ConfigurationManager.AppSettings["ParseApiUrl"];
-            Assert.NotNull(apiUrl);
-            Assert.Equal(apiUrl, _provider.ApiUrl);
+            apiUrl.Should().NotBeNull();
+
+            _provider.ApiUrl.Should().Be(apiUrl);
         }
 
         [Fact]
         public void RestApiKey_MatchesAppSettings()
         {
             string restKey = ConfigurationManager.AppSettings["ParseRestApiKey"];
-            Assert.NotNull(restKey);
-            Assert.Equal(restKey, _provider.RestApiKey);
+            restKey.Should().NotBeNull();
+
+            _provider.RestApiKey.Should().Be(restKey);
         }
 
         #endregion
