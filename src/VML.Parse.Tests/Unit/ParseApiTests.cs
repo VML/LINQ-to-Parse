@@ -45,7 +45,7 @@ namespace VML.Parse.Tests.Unit
         [Fact]
         public void Query_InvalidQuery_ThrowsException()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             IList<TestObject> results = null;
 
             Assert.Throws<Exception>(() => results = parseApi.Query<TestObject>("where=dkdkdkdkdkd"));
@@ -59,7 +59,7 @@ namespace VML.Parse.Tests.Unit
         [InlineData(0)]
         public void Query_Limit(int amount)
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var results =
                 parseApi.Query<TestObject>("limit=" + amount);
             var expectedResults = _testObjects.Take(amount).ToList();
@@ -71,14 +71,14 @@ namespace VML.Parse.Tests.Unit
         [Fact]
         public void Query_NullParams_DoesNotThrow()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             Assert.DoesNotThrow(() => parseApi.Query<TestObject>(null));
         }
 
         [Fact]
         public void Query_OrderAscending()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var results =
                 parseApi.Query<TestObject>("order=age");
             var expectedResults = _testObjects.OrderBy(to => to.Age).ToList();
@@ -90,7 +90,7 @@ namespace VML.Parse.Tests.Unit
         [Fact]
         public void Query_OrderDescending()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var results =
                 parseApi.Query<TestObject>("order=-age");
             var expectedResults = _testObjects.OrderByDescending(to => to.Age).ToList();
@@ -102,7 +102,7 @@ namespace VML.Parse.Tests.Unit
         [Fact]
         public void Query_SingleQuotesFails()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             IList<TestObject> results = null;
 
             Assert.Throws<Exception>(() => results = parseApi.Query<TestObject>("where={'firstName': 'Ben'}"));
@@ -116,7 +116,7 @@ namespace VML.Parse.Tests.Unit
         [InlineData(0)]
         public void Query_Skip(int amount)
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var results =
                 parseApi.Query<TestObject>("skip=" + amount);
             var expectedResults = _testObjects.Skip(amount).ToList();
@@ -132,7 +132,7 @@ namespace VML.Parse.Tests.Unit
         [InlineData(0, 4)]
         public void Query_SkipAndLimit(int skip, int limit)
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var results =
                 parseApi.Query<TestObject>("skip=" + skip + "&limit=" + limit);
             var expectedResults = _testObjects.Skip(skip).Take(limit).ToList();
@@ -163,7 +163,7 @@ namespace VML.Parse.Tests.Unit
         [Fact]
         public void Update()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var obj = _testObjects.First();
             string oldName = obj.FirstName;
             string newName = oldName + oldName;
@@ -177,7 +177,7 @@ namespace VML.Parse.Tests.Unit
         [Fact]
         public void Update_WithPointer()
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             var obj = _testObjects.First();
 
             obj.Test2Pointer = new ParsePointer<Test2Object> { ObjectId = _test2Objects.First().ObjectId };
@@ -206,7 +206,7 @@ namespace VML.Parse.Tests.Unit
             string queryString, List<T> expectedResults, bool expectMoreThanZero)
             where T : TestObject
         {
-            var parseApi = new ParseApi(new AppSettingsParseApiSettingsProvider());
+            var parseApi = new ParseApi();
             IList<T> results = null;
 
             Assert.DoesNotThrow(() => results = parseApi.Query<T>(queryString));

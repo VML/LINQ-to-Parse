@@ -72,9 +72,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ParseClassNameAttribute.cs" />
+    <Compile Include="Interfaces\IRequestExecutor.cs" />
+    <Compile Include="Execution\RequestExecutor.cs" />
+    <Compile Include="Interfaces\IParseApi.cs" />
     <Compile Include="Model\AuthData.cs" />
     <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\FacebookAuthData.cs" />
+    <Compile Include="ParseApi.cs" />
+    <Compile Include="ParseApi.roles.cs" />
+    <Compile Include="ParseApi.users.cs" />
     <Compile Include="ResultSets\ParseBasicResponse.cs" />
     <Compile Include="Util\ClassUtils.cs" />
     <Compile Include="Defaults\AppSettingsParseApiSettingsProvider.cs" />
@@ -82,9 +88,7 @@
     <Compile Include="Interfaces\ILocatable.cs" />
     <Compile Include="Interfaces\IParseApiSettingsProvider.cs" />
     <Compile Include="Extensions\LogExtensions.cs" />
-    <Compile Include="Extensions\ModelExtensions.cs" />
-    <Compile Include="ParseApi.cs" />
-    <Compile Include="ParseContext.cs" />
+    <Compile Include="ParseApi.objects.cs" />
     <Compile Include="ResultSets\ParseCountResults.cs" />
     <Compile Include="JSON\ParseDeserializer.cs" />
     <Compile Include="Model\ParseGeoPoint.cs" />
@@ -95,6 +99,7 @@
     <Compile Include="Model\ParseUser.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\RequestBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

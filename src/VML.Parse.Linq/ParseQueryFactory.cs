@@ -25,13 +25,13 @@ namespace VML.Parse.Linq
 
         public static ParseQueryable<T> Queryable<T>()
         {
-            return Queryable<T>((IParseApiSettingsProvider)null);
+            return Queryable<T>((IParseApi)null);
         }
 
-        public static ParseQueryable<T> Queryable<T>(IParseApiSettingsProvider settingsProvider)
+        public static ParseQueryable<T> Queryable<T>(IParseApi parseApi)
         {
-            settingsProvider = settingsProvider ?? new AppSettingsParseApiSettingsProvider();
-            return Queryable<T>(CreateParser(), CreateExecutor(settingsProvider));
+            parseApi = parseApi ?? new ParseApi();
+            return Queryable<T>(CreateParser(), CreateExecutor(parseApi));
         }
 
         public static ParseQueryable<T> Queryable<T>(IQueryExecutor executor)
@@ -48,9 +48,9 @@ namespace VML.Parse.Linq
 
         #region Methods
 
-        private static IQueryExecutor CreateExecutor(IParseApiSettingsProvider settingsProvider)
+        private static IQueryExecutor CreateExecutor(IParseApi parseApi)
         {
-            return new ParseQueryExecutor(settingsProvider);
+            return new ParseQueryExecutor(parseApi);
         }
 
         private static IQueryParser CreateParser()

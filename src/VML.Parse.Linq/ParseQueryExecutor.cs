@@ -27,15 +27,15 @@ namespace VML.Parse.Linq
     {
         #region Constants and Fields
 
-        private IParseApiSettingsProvider _settingsProvider;
+        private readonly IParseApi _parseApi;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public ParseQueryExecutor(IParseApiSettingsProvider settingsProvider)
+        public ParseQueryExecutor(IParseApi parseApi)
         {
-            _settingsProvider = settingsProvider;
+            _parseApi = parseApi;
         }
 
         #endregion
@@ -45,7 +45,7 @@ namespace VML.Parse.Linq
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             string queryString = TranslateToQueryString(queryModel);
-            IList<T> query = ParseContext.API.Query<T>(queryString);
+            IList<T> query = _parseApi.Query<T>(queryString);
 
             return query.ToList();
         }
@@ -71,7 +71,7 @@ namespace VML.Parse.Linq
                 }
 
                 var handler = (ScalarResultHandlerMethod<T>)handlerMap[resultOperator.GetType()];
-                returnValue = handler.Invoke(queryString, ParseContext.API, queryModel.MainFromClause.ItemType);
+                returnValue = handler.Invoke(queryString, _parseApi, queryModel.MainFromClause.ItemType);
             }
 
             return returnValue;
@@ -80,7 +80,7 @@ namespace VML.Parse.Linq
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
             string queryString = TranslateToQueryString(queryModel);
-            IList<T> query = ParseContext.API.Query<T>(queryString);
+            IList<T> query = _parseApi.Query<T>(queryString);
 
             if (returnDefaultWhenEmpty)
             {

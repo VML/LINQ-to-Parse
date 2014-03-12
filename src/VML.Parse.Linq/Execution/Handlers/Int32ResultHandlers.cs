@@ -10,6 +10,7 @@
 
 using System;
 using System.Linq;
+using VML.Parse.Interfaces;
 
 #endregion
 
@@ -19,7 +20,7 @@ namespace VML.Parse.Linq.Execution.Handlers
     {
         #region Methods
 
-        internal static Int32 HandleCount(string queryString, ParseApi api, Type objectType)
+        internal static Int32 HandleCount(string queryString, IParseApi api, Type objectType)
         {
             return (Int32)api.Count(queryString, objectType);
         }

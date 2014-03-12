@@ -24,7 +24,7 @@ using Xunit.Extensions;
 
 namespace VML.Parse.Tests.Integration
 {
-    public partial class TranslationVisitorTests
+    public partial class QueryStringGenerationTests
     {
         #region Public Methods
 

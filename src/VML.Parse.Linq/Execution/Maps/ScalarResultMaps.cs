@@ -11,12 +11,13 @@
 using System;
 using System.Collections;
 using System.Linq;
+using VML.Parse.Interfaces;
 
 #endregion
 
 namespace VML.Parse.Linq.Execution.Maps
 {
-    internal delegate T ScalarResultHandlerMethod<T>(string queryString, ParseApi api, Type objectType);
+    internal delegate T ScalarResultHandlerMethod<T>(string queryString, IParseApi api, Type objectType);
 
     internal class ScalarResultMaps : Map<ScalarResultMaps, Type, IDictionary>
     {

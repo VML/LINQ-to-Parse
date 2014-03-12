@@ -18,7 +18,7 @@ using VML.Parse.Tests.Support;
 
 namespace VML.Parse.Tests.Integration
 {
-    public partial class TranslationVisitorTests
+    public partial class QueryStringGenerationTests
     {
         #region Public Properties
 
