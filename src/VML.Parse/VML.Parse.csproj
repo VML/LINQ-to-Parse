@@ -73,7 +73,7 @@
   <ItemGroup>
     <Compile Include="Attributes\ParseClassNameAttribute.cs" />
     <Compile Include="Interfaces\IRequestExecutor.cs" />
-    <Compile Include="Execution\RequestExecutor.cs" />
+    <Compile Include="Defaults\RequestExecutor.cs" />
     <Compile Include="Interfaces\IParseApi.cs" />
     <Compile Include="Model\AuthData.cs" />
     <Compile Include="Model\BaseModel.cs" />

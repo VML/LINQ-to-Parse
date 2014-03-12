@@ -3,7 +3,6 @@
 using System;
 using System.Linq;
 using VML.Parse.Defaults;
-using VML.Parse.Execution;
 using VML.Parse.Interfaces;
 
 #endregion
@@ -28,8 +27,8 @@ namespace VML.Parse
 
         public ParseApi(IRequestExecutor executor, IParseApiSettingsProvider settingsProvider)
         {
-            _executor = executor ?? new RequestExecutor(_settingsProvider);
             _settingsProvider = settingsProvider ?? new AppSettingsParseApiSettingsProvider();
+            _executor = executor ?? new RequestExecutor(_settingsProvider);
         }
 
         #endregion

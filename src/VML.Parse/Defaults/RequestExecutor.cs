@@ -13,7 +13,7 @@ using VML.Parse.ResultSets;
 
 #endregion
 
-namespace VML.Parse.Execution
+namespace VML.Parse.Defaults
 {
     internal class RequestExecutor : IRequestExecutor
     {
