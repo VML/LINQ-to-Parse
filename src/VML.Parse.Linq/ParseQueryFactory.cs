@@ -12,7 +12,7 @@ using System;
 using System.Linq;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
-using VML.Parse.DefaultImplementations;
+using VML.Parse.Defaults;
 using VML.Parse.Interfaces;
 
 #endregion

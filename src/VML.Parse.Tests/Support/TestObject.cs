@@ -16,14 +16,14 @@ using Faker;
 using Newtonsoft.Json;
 using Plant.Core;
 using RestSharp;
-using VML.Parse.DefaultImplementations;
+using VML.Parse.Defaults;
 using VML.Parse.Interfaces;
 using VML.Parse.Model;
 using VML.Parse.ResultSets;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests.Support
+namespace VML.Parse.Tests.Support
 {
     [DataContract]
     public class TestObject : BaseModel, ILocatable<ParseGeoPoint>, IBaseModel

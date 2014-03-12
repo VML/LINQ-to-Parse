@@ -15,7 +15,7 @@ using LoggingExtensions.Logging;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests
+namespace VML.Parse.Tests
 {
     /// <summary>
     ///     Extensions to help make logging awesome - this should be installed into the root namespace of your application

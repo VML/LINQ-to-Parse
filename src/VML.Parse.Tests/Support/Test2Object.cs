@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests.Support
+namespace VML.Parse.Tests.Support
 {
     [DataContract]
     public class Test2Object : TestObject

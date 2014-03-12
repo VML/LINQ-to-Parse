@@ -15,7 +15,7 @@ using Remotion.Linq;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests.Support
+namespace VML.Parse.Tests.Support
 {
     internal class TestExecutor : IQueryExecutor
     {

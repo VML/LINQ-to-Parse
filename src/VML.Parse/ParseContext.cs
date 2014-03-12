@@ -22,7 +22,6 @@ namespace VML.Parse
 
         private readonly ParseApi _api;
         private static ParseContext _instance;
-        private IParseApiSettingsProvider _settingsProvider;
 
         #endregion
 
@@ -30,7 +29,6 @@ namespace VML.Parse
 
         private ParseContext(IParseApiSettingsProvider settingsProvider)
         {
-            _settingsProvider = settingsProvider;
             _api = new ParseApi(settingsProvider);
         }
 

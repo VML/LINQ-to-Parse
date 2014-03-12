@@ -11,11 +11,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using VML.Parse.Linq.Tests.Support;
+using VML.Parse.Tests.Support;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests.ExecutionTests
+namespace VML.Parse.Tests.Unit
 {
     public partial class ParseApiTests
     {

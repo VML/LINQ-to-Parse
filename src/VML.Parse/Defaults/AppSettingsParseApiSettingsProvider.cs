@@ -15,7 +15,7 @@ using VML.Parse.Interfaces;
 
 #endregion
 
-namespace VML.Parse.DefaultImplementations
+namespace VML.Parse.Defaults
 {
     public class AppSettingsParseApiSettingsProvider : IParseApiSettingsProvider
     {

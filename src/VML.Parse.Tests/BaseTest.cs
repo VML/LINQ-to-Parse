@@ -16,7 +16,7 @@ using Plant.Core;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests
+namespace VML.Parse.Tests
 {
     public class BaseTest
     {

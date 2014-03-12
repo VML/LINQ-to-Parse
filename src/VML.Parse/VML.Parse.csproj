@@ -77,7 +77,7 @@
     <Compile Include="Model\FacebookAuthData.cs" />
     <Compile Include="ResultSets\ParseBasicResponse.cs" />
     <Compile Include="Util\ClassUtils.cs" />
-    <Compile Include="DefaultImplementations\AppSettingsParseApiSettingsProvider.cs" />
+    <Compile Include="Defaults\AppSettingsParseApiSettingsProvider.cs" />
     <Compile Include="Interfaces\IBaseModel.cs" />
     <Compile Include="Interfaces\ILocatable.cs" />
     <Compile Include="Interfaces\IParseApiSettingsProvider.cs" />

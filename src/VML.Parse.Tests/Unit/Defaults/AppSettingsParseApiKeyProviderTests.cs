@@ -11,12 +11,12 @@
 using System;
 using System.Configuration;
 using System.Linq;
-using VML.Parse.DefaultImplementations;
+using VML.Parse.Defaults;
 using Xunit;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests.ImplementationTests
+namespace VML.Parse.Tests.Unit.Defaults
 {
     public class AppSettingsParseApiKeyProviderTests
     {

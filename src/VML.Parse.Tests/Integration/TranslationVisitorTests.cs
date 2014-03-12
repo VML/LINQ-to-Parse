@@ -13,15 +13,16 @@ using System.Linq;
 using NSubstitute;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.Structure;
-using VML.Parse.Linq.Tests.Support;
+using VML.Parse.Linq;
 using VML.Parse.Linq.Transformation;
 using VML.Parse.Linq.Translation;
+using VML.Parse.Tests.Support;
 using Xunit;
 using Xunit.Extensions;
 
 #endregion
 
-namespace VML.Parse.Linq.Tests.GenerationTests
+namespace VML.Parse.Tests.Integration
 {
     public partial class TranslationVisitorTests
     {
